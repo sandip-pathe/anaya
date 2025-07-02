@@ -14,7 +14,6 @@ const navLinks = [
   { label: "Try", href: "#" },
   { label: "Pricing", href: "#" },
   { label: "Security", href: "#" },
-  { label: "Company", href: "#" },
 ];
 
 export default function Navbar() {
@@ -23,9 +22,10 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
-        <div className="flex items-center gap-6">
-          <Logo />
-          <nav className="hidden items-center gap-6 md:flex">
+        <Logo />
+
+        <div className="hidden items-center gap-6 md:flex">
+          <nav className="flex items-center gap-6">
             {navLinks.map((link) => (
               <a
                 key={link.label}
@@ -36,11 +36,10 @@ export default function Navbar() {
               </a>
             ))}
           </nav>
-        </div>
-
-        <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost">Login</Button>
-          <Button>Get Early Access</Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost">Login</Button>
+            <Button>Get Early Access</Button>
+          </div>
         </div>
 
         <div className="md:hidden">
