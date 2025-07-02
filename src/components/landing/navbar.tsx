@@ -73,10 +73,6 @@ export default function Navbar() {
                   </nav>
                 </div>
                 <div className="mt-auto flex flex-col gap-2 border-t pt-6">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Switch Theme</span>
-                    <ThemeToggle />
-                  </div>
                   <Button variant="outline">Login</Button>
                   <EarlyAccessDialog>
                     <Button>Get Early Access</Button>
