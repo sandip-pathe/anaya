@@ -10,7 +10,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { EarlyAccessDialog } from "@/components/landing/early-access-dialog";
-import { ThemeToggle } from "../theme-toggle";
 
 const navLinks = [
   { label: "Try", href: "#" },
@@ -39,7 +38,6 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <ThemeToggle />
             <Button variant="ghost">Login</Button>
             <EarlyAccessDialog>
               <Button>Get Early Access</Button>

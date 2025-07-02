@@ -5,7 +5,7 @@ import { EarlyAccessDialog } from "@/components/landing/early-access-dialog";
 
 export default function Cta() {
   return (
-    <section id="cta" className="bg-white py-16 sm:py-24">
+    <section id="cta" className="bg-secondary py-16 sm:py-24">
       <div className="container mx-auto px-4 text-center">
         <h2 className="font-headline text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Join Our Early Access Program
