@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
+        body: ['"Source Sans Pro"', 'sans-serif'],
         headline: ['"Merriweather"', 'serif'],
         code: ['monospace'],
       },
