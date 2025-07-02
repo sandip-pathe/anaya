@@ -1,0 +1,22 @@
+import { Button } from "@/components/ui/button";
+
+export default function Header() {
+  return (
+    <section className="py-20 text-center sm:py-32">
+      <div className="container mx-auto px-4">
+        <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+          Tired of Wasting Hours Reading Legal Docs?
+        </h1>
+        <p className="mt-6 text-lg leading-8 text-foreground/80 sm:text-xl">
+          Get AI-Powered Legal Summaries in Seconds.
+        </p>
+        <p className="mt-4 max-w-2xl mx-auto text-base text-foreground/60">
+          Summarize contracts, case files, and legal documents — clear, concise, no legal jargon.
+        </p>
+        <div className="mt-10 flex items-center justify-center gap-x-6">
+          <Button size="lg">Get Early Access</Button>
+        </div>
+      </div>
+    </section>
+  );
+}
