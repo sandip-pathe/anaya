@@ -12,11 +12,11 @@ export default function Cta() {
             Join Our Early Access Program
           </h2>
           <p className="mt-4 text-lg leading-6 text-foreground/80">
-            Be among the first to test CLAIR and save hours every week.
+            Be among the first to test Arin and save hours every week.
           </p>
           <div className="mt-8">
             <EarlyAccessDialog>
-              <Button size="lg">Request Early Access</Button>
+              <Button size="lg">Join The Wishlist</Button>
             </EarlyAccessDialog>
           </div>
           <p className="mt-4 text-sm text-foreground/60">

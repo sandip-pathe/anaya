@@ -40,7 +40,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <Button variant="ghost">Login</Button>
             <EarlyAccessDialog>
-              <Button>Get Early Access</Button>
+              <Button>Join The Wishlist</Button>
             </EarlyAccessDialog>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default function Navbar() {
                 <div className="mt-auto flex flex-col gap-2 border-t pt-6">
                   <Button variant="outline">Login</Button>
                   <EarlyAccessDialog>
-                    <Button>Get Early Access</Button>
+                    <Button>Join The Wishlist</Button>
                   </EarlyAccessDialog>
                 </div>
               </div>

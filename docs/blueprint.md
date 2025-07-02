@@ -1,4 +1,4 @@
-# **App Name**: CLAIR (Contract & Legal AI Rapid Summarizer)
+# **App Name**: ARIN (Contract & Legal AI Rapid Summarizer)
 
 ## Core Features:
 

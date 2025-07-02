@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'CLAIR | AI Legal Summarizer',
+  title: 'Arin | AI Legal Summarizer',
   description: 'AI-Powered Legal Summaries in Seconds',
 };
 

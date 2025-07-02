@@ -60,7 +60,7 @@ export function EarlyAccessDialog({ children }: { children: React.ReactNode }) {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Request Early Access</DialogTitle>
+          <DialogTitle>Join The Wishlist</DialogTitle>
           <DialogDescription>
             Enter your email below to join the waitlist. We'll notify you when
             a spot opens up.

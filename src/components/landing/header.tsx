@@ -19,7 +19,7 @@ export default function Header() {
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <EarlyAccessDialog>
-              <Button size="lg">Get Early Access</Button>
+              <Button size="lg">Join The Wishlist</Button>
             </EarlyAccessDialog>
           </div>
         </div>

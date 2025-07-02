@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <Logo />
           <p className="text-sm text-foreground/60">
-            &copy; {currentYear} CLAIR. All rights reserved.
+            &copy; {currentYear} Arin. All rights reserved.
           </p>
         </div>
       </div>
