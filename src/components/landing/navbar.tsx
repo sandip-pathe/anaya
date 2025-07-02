@@ -9,6 +9,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { EarlyAccessDialog } from "@/components/landing/early-access-dialog";
 
 const navLinks = [
   { label: "Try", href: "#" },
@@ -38,7 +39,9 @@ export default function Navbar() {
           </nav>
           <div className="flex items-center gap-2">
             <Button variant="ghost">Login</Button>
-            <Button>Get Early Access</Button>
+            <EarlyAccessDialog>
+              <Button>Get Early Access</Button>
+            </EarlyAccessDialog>
           </div>
         </div>
 
@@ -69,7 +72,9 @@ export default function Navbar() {
                 </div>
                 <div className="mt-auto flex flex-col gap-2 border-t pt-6">
                   <Button variant="outline">Login</Button>
-                  <Button>Get Early Access</Button>
+                  <EarlyAccessDialog>
+                    <Button>Get Early Access</Button>
+                  </EarlyAccessDialog>
                 </div>
               </div>
             </SheetContent>

@@ -1,4 +1,7 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
+import { EarlyAccessDialog } from "@/components/landing/early-access-dialog";
 
 export default function Cta() {
   return (
@@ -11,7 +14,9 @@ export default function Cta() {
           Be among the first to test CLAIR and save hours every week.
         </p>
         <div className="mt-8">
-          <Button size="lg">Request Early Access</Button>
+          <EarlyAccessDialog>
+            <Button size="lg">Request Early Access</Button>
+          </EarlyAccessDialog>
         </div>
         <p className="mt-4 text-sm text-foreground/60">
           Spaces are limited — priority given to practicing legal professionals.

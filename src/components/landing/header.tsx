@@ -1,4 +1,7 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
+import { EarlyAccessDialog } from "@/components/landing/early-access-dialog";
 
 export default function Header() {
   return (
@@ -14,7 +17,9 @@ export default function Header() {
           Summarize contracts, case files, and legal documents — clear, concise, no legal jargon.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
-          <Button size="lg">Get Early Access</Button>
+          <EarlyAccessDialog>
+            <Button size="lg">Get Early Access</Button>
+          </EarlyAccessDialog>
         </div>
       </div>
     </section>
