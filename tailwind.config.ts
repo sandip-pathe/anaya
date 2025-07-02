@@ -11,7 +11,8 @@ export default {
     extend: {
       fontFamily: {
         body: ['"Source Sans Pro"', 'sans-serif'],
-        headline: ['"Merriweather"', 'serif'],
+        headline: ['"Playfair Display"', 'serif'],
+        logo: ['"League Spartan"', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {

@@ -1,11 +1,8 @@
-import { Scale } from "lucide-react";
-
 export default function Logo() {
   return (
-    <div className="flex items-center gap-2">
-      <Scale className="h-8 w-8 text-primary" />
-      <span className="text-xl font-bold tracking-wider text-foreground">
-        CLAIR
+    <div className="flex items-center">
+      <span className="font-logo text-4xl font-bold text-black">
+        Arin
       </span>
     </div>
   );
