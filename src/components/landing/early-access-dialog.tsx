@@ -23,10 +23,12 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
+  message: z.string().optional(),
 })
 
 type EarlyAccessFormValues = z.infer<typeof formSchema>
@@ -39,11 +41,12 @@ export function EarlyAccessDialog({ children }: { children: React.ReactNode }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
+      message: "",
     },
   })
 
   function onSubmit(data: EarlyAccessFormValues) {
-    console.log("Early access request:", data.email)
+    console.log("Early access request:", data)
     toast({
       title: "Success!",
       description: "You've been added to our early access list.",
@@ -74,6 +77,22 @@ export function EarlyAccessDialog({ children }: { children: React.ReactNode }) {
                   <FormControl>
                     <Input
                       placeholder="name@example.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Message (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Your questions or comments..."
                       {...field}
                     />
                   </FormControl>
