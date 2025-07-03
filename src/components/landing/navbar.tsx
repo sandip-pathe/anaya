@@ -7,6 +7,8 @@ import { Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
+  SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { EarlyAccessDialog } from "@/components/landing/early-access-dialog";
@@ -21,10 +23,9 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <Logo />
-
         <div className="hidden items-center gap-6 md:flex">
           <nav className="flex items-center gap-6">
             {navLinks.map((link) => (
@@ -38,9 +39,9 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <Button variant="ghost">Login</Button>
+            <Button variant="ghost" className="text-base">Login</Button>
             <EarlyAccessDialog>
-              <Button>Join The Wishlist</Button>
+            <Button variant="outline" className="border-2 border-foreground text-base">Join The Wishlist</Button>
             </EarlyAccessDialog>
           </div>
         </div>
@@ -56,7 +57,11 @@ export default function Navbar() {
             <SheetContent side="right" className="w-[300px]">
               <div className="flex h-full flex-col">
                 <div className="flex-1">
-                  <Logo />
+                  <SheetHeader className="p-0 text-left">
+                    <SheetTitle asChild>
+                      <Logo />
+                    </SheetTitle>
+                  </SheetHeader>
                   <nav className="mt-8 flex flex-col gap-6">
                     {navLinks.map((link) => (
                       <a
@@ -73,7 +78,7 @@ export default function Navbar() {
                 <div className="mt-auto flex flex-col gap-2 border-t pt-6">
                   <Button variant="outline">Login</Button>
                   <EarlyAccessDialog>
-                    <Button>Join The Wishlist</Button>
+                    <Button variant="outline" className="border-2 border-foreground">Join The Wishlist</Button>
                   </EarlyAccessDialog>
                 </div>
               </div>
