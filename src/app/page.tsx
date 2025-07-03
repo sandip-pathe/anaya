@@ -1,5 +1,6 @@
 import Navbar from "@/components/landing/navbar";
 import Header from "@/components/landing/header";
+import Demo from "@/components/landing/demo";
 import Benefits from "@/components/landing/benefits";
 import HowItWorks from "@/components/landing/how-it-works";
 import Cta from "@/components/landing/cta";
@@ -12,6 +13,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         <Header />
+        <Demo />
         <Benefits />
         <HowItWorks />
         <Cta />

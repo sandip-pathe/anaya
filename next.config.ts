@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    domains: ['i.pinimg.com', 'another-domain.com'],
     remotePatterns: [
       {
         protocol: 'https',
