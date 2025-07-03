@@ -28,10 +28,10 @@ export default function Benefits() {
             <Card key={index} className="text-center border-0 shadow-none bg-transparent">
               <CardHeader>
                 <div className="flex justify-center mb-4">{benefit.icon}</div>
-                <CardTitle className="font-headline text-xl">{benefit.title}</CardTitle>
+                <CardTitle className="font-headline text-2xl">{benefit.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-foreground/80">{benefit.description}</p>
+                <p className="text-lg text-foreground/80">{benefit.description}</p>
               </CardContent>
             </Card>
           ))}

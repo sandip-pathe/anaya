@@ -24,10 +24,10 @@ export default function HowItWorks() {
     <section id="how-it-works" className="py-16 sm:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-headline text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             How It Works
           </h2>
-          <p className="mt-4 text-lg text-foreground/80">
+          <p className="mt-4 text-xl text-foreground/80">
             Three simple steps to get your legal summaries.
           </p>
         </div>
@@ -40,12 +40,12 @@ export default function HowItWorks() {
                     {step.icon}
                   </span>
                 </div>
-                <CardTitle className="font-headline text-xl">
+                <CardTitle className="font-headline text-2xl">
                   <span className="text-muted-foreground mr-2">{index + 1}.</span>{step.title}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-foreground/80">{step.description}</p>
+                <p className="text-lg text-foreground/80">{step.description}</p>
               </CardContent>
             </Card>
           ))}
