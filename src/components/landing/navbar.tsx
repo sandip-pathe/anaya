@@ -21,7 +21,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full bg-background">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <Logo />
 
@@ -31,7 +31,7 @@ export default function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 {link.label}
               </a>
