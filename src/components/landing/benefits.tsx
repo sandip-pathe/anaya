@@ -3,17 +3,17 @@ import { CheckCircle2, ShieldCheck, UserCheck } from "lucide-react";
 
 const benefits = [
   {
-    icon: <CheckCircle2 className="h-8 w-8 text-accent" />,
+    icon: <CheckCircle2 className="h-8 w-8 text-green-500" />,
     title: "Save Hours Every Week",
     description: "AI highlights key points, deadlines, and risks — no more manual skimming.",
   },
   {
-    icon: <UserCheck className="h-8 w-8 text-accent" />,
+    icon: <UserCheck className="h-8 w-8 text-green-500" />,
     title: "Built for Legal Professionals",
     description: "Clear, professional summaries — not generic AI fluff.",
   },
   {
-    icon: <ShieldCheck className="h-8 w-8 text-accent" />,
+    icon: <ShieldCheck className="h-8 w-8 text-green-500" />,
     title: "Secure & Private",
     description: "Your documents are never stored — instant processing, instant results.",
   },

@@ -2,7 +2,8 @@ import Navbar from "@/components/landing/navbar";
 import Header from "@/components/landing/header";
 import Demo from "@/components/landing/demo";
 import Benefits from "@/components/landing/benefits";
-import HowItWorks from "@/components/landing/how-it-works";
+import Summarization from "@/components/landing/summarization";
+import DataExtraction from "@/components/landing/data-extraction";
 import Cta from "@/components/landing/cta";
 import Faq from "@/components/landing/faq";
 import Footer from "@/components/landing/footer";
@@ -15,7 +16,8 @@ export default function Home() {
         <Header />
         <Demo />
         <Benefits />
-        <HowItWorks />
+        <Summarization />
+        <DataExtraction />
         <Cta />
         <Faq />
       </main>
