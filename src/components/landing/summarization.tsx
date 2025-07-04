@@ -15,7 +15,7 @@ export default function Summarization() {
           <div className="order-2 md:order-1">
             <div className="mx-auto max-w-xl">
               <h2 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                AI-Powered Summarization
+                AI Document Summarization
               </h2>
               <p className="mt-6 text-xl text-foreground/80">
                 Stop drowning in paperwork. Arin’s advanced AI reads your legal documents and delivers a clear, concise summary in seconds. Focus on what matters, not on manual reading.

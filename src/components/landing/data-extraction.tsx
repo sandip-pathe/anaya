@@ -24,7 +24,7 @@ export default function DataExtraction() {
           </div>
           <div className="mx-auto max-w-xl">
             <h2 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Data Extraction & Visualization
+            Essential Insights Fast
             </h2>
             <p className="mt-6 text-xl text-foreground/80">
               Go beyond summaries. Arin identifies and extracts critical data points from your documents, presenting them in a structured and visual format. Never miss a deadline or key piece of information again.
