@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/landing/logo";
-import { Menu } from "lucide-react";
+import { Menu, MoveRight } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { EarlyAccessDialog } from "@/components/landing/early-access-dialog";
+import WishlistOutlineButton from "../WishlistOutlineButton";
 
 const navLinks = [
   { label: "Try", href: "#" },
@@ -40,9 +40,7 @@ export default function Navbar() {
           </nav>
           <div className="flex items-center gap-2">
             <Button variant="ghost" className="text-base">Login</Button>
-            <EarlyAccessDialog>
-            <Button variant="outline" className="border-2 border-foreground text-base">Join The Wishlist</Button>
-            </EarlyAccessDialog>
+            <WishlistOutlineButton/>
           </div>
         </div>
 
@@ -77,9 +75,7 @@ export default function Navbar() {
                 </div>
                 <div className="mt-auto flex flex-col gap-2 border-t pt-6">
                   <Button variant="outline">Login</Button>
-                  <EarlyAccessDialog>
-                    <Button variant="outline" className="border-2 border-foreground">Join The Wishlist</Button>
-                  </EarlyAccessDialog>
+                  <WishlistOutlineButton/>
                 </div>
               </div>
             </SheetContent>

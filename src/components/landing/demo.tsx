@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Demo() {
   return (
-    <section id="demo" className="py-16 sm:py-24 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900/20">
+    <section id="demo" className="py-16 sm:py-24 bg-gradient-to-b from-background to-secondary dark:from-gray-900 dark:to-blue-900/20">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl">
           <div className="relative overflow-hidden rounded-2xl border-4 border-white dark:border-gray-800 shadow-2xl shadow-blue-500/20 dark:shadow-blue-500/10 transform transition-transform duration-500 hover:scale-[1.02]">
@@ -26,9 +26,9 @@ export default function Demo() {
             </div>
           </div>
           <div className="mt-8 flex justify-center">
-            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-full shadow-md">
-              <div className="h-3 w-3 rounded-full bg-red-400 animate-pulse"></div>
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full shadow-md">
+              <div className="h-3 w-3 rounded-full bg-red-200 animate-pulse"></div>
+              <span className="text-sm font-medium text-gray-200 dark:text-gray-300">
                 Live Demo
               </span>
             </div>

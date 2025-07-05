@@ -21,7 +21,7 @@ const benefits = [
 
 export default function Benefits() {
   return (
-    <section id="benefits" className="py-16 sm:py-24 bg-secondary">
+    <section id="benefits" className="py-16 sm:py-24">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {benefits.map((benefit, index) => (

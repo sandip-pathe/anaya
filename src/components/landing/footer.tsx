@@ -1,8 +1,9 @@
 import Logo from "@/components/landing/logo";
 import Link from "next/link";
-import { EarlyAccessDialog } from "./early-access-dialog";
 import { Button } from "../ui/button";
 import { MoveRight } from "lucide-react";
+import WishlistButton from "../WishlistButton";
+import WishlistOutlineButton from "../WishlistOutlineButton";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -17,14 +18,7 @@ export default function Footer() {
             <h2 className="font-headline text-2xl sm:text-3xl font-bold tracking-tight">
               Build the best product experiences.
             </h2>
-            <div className="mt-6">
-            <EarlyAccessDialog>
-              <Button variant="outline" className="border-2 border-foreground">
-                <p className="text-base">Join The Wishlist</p>
-                <MoveRight className="h-8 w-8 text-foreground" />
-                </Button>
-            </EarlyAccessDialog>
-            </div>
+            <WishlistOutlineButton className="mt-6"/>
           </div>
 
           {/* Right: Logo & Social */}

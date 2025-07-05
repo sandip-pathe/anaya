@@ -1,11 +1,10 @@
 "use client"
 
-import { Button } from "@/components/ui/button";
-import { EarlyAccessDialog } from "@/components/landing/early-access-dialog";
+import WishlistButton from "../WishlistButton";
 
 export default function Header() {
   return (
-    <section className="py-20 text-center sm:py-32">
+    <section className="py-20 text-center sm:py-32 bg-background">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl">
           <h1 className="font-headline text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-[4.75rem] lg:leading-tight">
@@ -18,9 +17,7 @@ export default function Header() {
             Summarize contracts, case files, and legal documents — clear, concise, no legal jargon.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <EarlyAccessDialog>
-              <Button size="lg">Join The Wishlist</Button>
-            </EarlyAccessDialog>
+          <WishlistButton className="mt-8"/>
           </div>
         </div>
       </div>
