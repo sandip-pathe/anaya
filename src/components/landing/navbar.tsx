@@ -12,20 +12,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Link from "next/link";
+import WishlistButton from "../WishlistButton";
 
 const navLinks = [
-  { label: "Demo", href: "#demo" },
-  { label: "Benefits", href: "#benefits" },
-  { label: "Features", href: "#summarization" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Try", href: "/subscribe" },
+  { label: "Security", href: "#" },
+  { label: "Pricing", href: "#" },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <Logo />
         <div className="hidden items-center gap-6 md:flex">
@@ -40,6 +38,11 @@ export default function Navbar() {
               </Link>
             ))}
           </nav>
+          <div className="h-6 w-px bg-border" />
+          <Button variant="ghost" asChild>
+            <Link href="/login">Log In</Link>
+          </Button>
+          <WishlistButton />
         </div>
 
         <div className="md:hidden">
@@ -69,7 +72,17 @@ export default function Navbar() {
                         {link.label}
                       </Link>
                     ))}
+                     <Link
+                      href="/login"
+                      className="text-lg font-medium text-foreground"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Log In
+                    </Link>
                   </nav>
+                </div>
+                <div className="p-4">
+                  <WishlistButton className="w-full" />
                 </div>
               </div>
             </SheetContent>

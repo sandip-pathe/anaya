@@ -2,14 +2,6 @@ import Logo from "@/components/landing/logo";
 import Link from "next/link";
 import WishlistOutlineButton from "../WishlistOutlineButton";
 
-const navLinks = [
-  { label: "Demo", href: "#demo" },
-  { label: "Benefits", href: "#benefits" },
-  { label: "Features", href: "#summarization" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Try", href: "/subscribe" },
-];
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -29,17 +21,6 @@ export default function Footer() {
             {/* Right: Logo & Links */}
             <div className="flex flex-col items-center gap-4">
               <Logo />
-              <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className="font-body text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
             </div>
           </div>
           {/* Bottom: Links */}
