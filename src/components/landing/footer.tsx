@@ -5,6 +5,13 @@ import WishlistOutlineButton from "../WishlistOutlineButton";
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
+  const navLinks = [
+    { label: "Demo", href: "#demo" },
+    { label: "Benefits", href: "#benefits" },
+    { label: "Features", href: "#summarization" },
+    { label: "About", href: "#" },
+  ];
+
   return (
     <footer className="relative overflow-hidden bg-blue-950">
       <div className="relative container max-w-5xl mx-auto px-4 pt-16 flex justify-center">
@@ -21,6 +28,17 @@ export default function Footer() {
             {/* Right: Logo & Links */}
             <div className="flex flex-col items-center gap-4">
               <Logo />
+              <nav className="flex flex-col justify-center gap-x-6 gap-y-2 mt-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="font-body text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
             </div>
           </div>
           {/* Bottom: Links */}
