@@ -117,10 +117,10 @@ export default function EarlyAccessPage() {
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
+        <FormItem className="w-full text-base">
+          <FormLabel className="text-base">{label}</FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} />
+            <Input className="placeholder:text-base" placeholder={placeholder} {...field} />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -132,78 +132,40 @@ export default function EarlyAccessPage() {
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
       
       {/* Left: Form */}
-      <div className="flex flex-col justify-center px-8 py-12 bg-[#fffaf5] h-full overflow-y-auto">
-        <div className="max-w-lg mx-auto w-full space-y-8">
-          
-          <Logo />
-          <h2 className="text-3xl font-bold mb-6">Get in Touch</h2>
-
+      <div className="flex flex-col px-8 bg-[#fffaf5] h-full overflow-y-auto my-auto">
+      <div className="max-w-lg mx-auto w-full space-y-4 py-8">
+      <Logo />       
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              
-              {/* Purpose Selection */}
-              <FormField
-                control={form.control}
-                name="purpose"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-lg text-gray-800 mb-2">What would you like to do?</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="flex flex-col space-y-2"
-                      >
-                        <FormItem className="flex items-center space-x-2">
-                          <FormControl>
-                            <RadioGroupItem value="wishlistFree" />
-                          </FormControl>
-                          <FormLabel className="cursor-pointer">Join Wishlist (Free)</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-2">
-                          <FormControl>
-                            <RadioGroupItem value="wishlistPaid" />
-                          </FormControl>
-                          <FormLabel className="cursor-pointer">Join Wishlist (Priority - $10 Refundable)</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-2">
-                          <FormControl>
-                            <RadioGroupItem value="question" />
-                          </FormControl>
-                          <FormLabel className="cursor-pointer">Ask a Question</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {/* Common Fields */}
               <div className="space-y-4">
-                <InputField name="fullName" label="Full Name" placeholder="Your name" />
-                <InputField name="email" label="Email" placeholder="you@example.com" />
-                <InputField name="company" label="Company (optional)" placeholder="Your company" />
-                <InputField name="jobTitle" label="Job Title (optional)" placeholder="Your role" />
+                <div className="flex flex-col md:flex-row gap-4 w-full">
+                  <InputField name="fullName" label="Full Name" placeholder="Your name"/>
+                  <InputField name="email" label="Email" placeholder="you@example.com"/>
+                </div>
+                <div className="flex flex-col md:flex-row gap-4 w-full">
+                  <InputField name="company" label="Company (optional)" placeholder="Your company"/>
+                  <InputField name="jobTitle" label="Job Title (optional)" placeholder="Your role"/>
+                </div>
                 
                 <FormField
                   control={form.control}
                   name="teamSize"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Team Size (optional)</FormLabel>
+                      <FormLabel className="text-base">Team Size (optional)</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="text-base">
                             <SelectValue placeholder="Select team size" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="1-10">1-10</SelectItem>
-                          <SelectItem value="11-50">11-50</SelectItem>
-                          <SelectItem value="51-200">51-200</SelectItem>
-                          <SelectItem value="201-500">201-500</SelectItem>
-                          <SelectItem value="500+">500+</SelectItem>
+                          <SelectItem value="1-10" className="text-base">1-10</SelectItem>
+                          <SelectItem value="11-50" className="text-base">11-50</SelectItem>
+                          <SelectItem value="51-200" className="text-base">51-200</SelectItem>
+                          <SelectItem value="201-500" className="text-base">201-500</SelectItem>
+                          <SelectItem value="500+" className="text-base">500+</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -213,27 +175,25 @@ export default function EarlyAccessPage() {
               </div>
 
               {/* Conditional Fields for Wishlist */}
-              {watchPurpose === "wishlistFree" || watchPurpose === "wishlistPaid" ? (
+              {(watchPurpose === "wishlistFree" || watchPurpose === "wishlistPaid") && (
                 <div className="space-y-4">
-                  <InputField name="source" label="How did you hear about us?" placeholder="Google, LinkedIn, etc." />
                   <InputField name="challenges" label="What challenges are you trying to solve?" placeholder="Your answer" />
-                  
                   <FormField
                     control={form.control}
                     name="urgency"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>How important is this for you?</FormLabel>
+                        <FormLabel className="text-base">How important is this for you?</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="text-base">
                               <SelectValue placeholder="Select urgency" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="notUrgent">Not urgent</SelectItem>
-                            <SelectItem value="soon">Soon</SelectItem>
-                            <SelectItem value="veryUrgent">Very urgent</SelectItem>
+                            <SelectItem value="notUrgent" className="text-base">Not urgent</SelectItem>
+                            <SelectItem value="soon" className="text-base">Soon</SelectItem>
+                            <SelectItem value="veryUrgent" className="text-base">Very urgent</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -241,37 +201,33 @@ export default function EarlyAccessPage() {
                     )}
                   />
 
-                  {watchPurpose === "wishlistPaid" && (
-                    <Card className="bg-gray-100 border">
-                      <CardHeader>
-                        <CardTitle className="flex justify-between items-center">
-                          <span>Payment Amount</span>
-                          <span className="font-bold text-blue-600">$10.00 USD</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <InputField name="cardNumber" label="Card Number" placeholder="1234 5678 9012 3456" />
-                        <div className="grid grid-cols-2 gap-4">
-                          <InputField name="expiry" label="Expiry Date" placeholder="MM/YY" />
-                          <InputField name="cvc" label="CVC" placeholder="123" />
-                        </div>
-                        <p className="text-sm text-gray-500">Fully refundable anytime before launch.</p>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              ) : null}
-
-              {/* Conditional for Ask a Question */}
-              {watchPurpose === "question" && (
+                  {/* Purpose Selection - Now inside Join Wishlist tab */}
+              {(watchPurpose === "wishlistFree" || watchPurpose === "wishlistPaid") && (
                 <FormField
                   control={form.control}
-                  name="questionText"
+                  name="purpose"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Question</FormLabel>
+                      <FormLabel className="text-lg text-gray-800 mb-2">Join Wishlist</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Type your question here..." rows={4} {...field} />
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          className="flex flex-col space-y-2"
+                        >
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem value="wishlistFree" />
+                            </FormControl>
+                            <FormLabel className="cursor-pointer text-base">Join Free</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem value="wishlistPaid" />
+                            </FormControl>
+                            <FormLabel className="cursor-pointer text-base">Priority Access ($10 Refundable)</FormLabel>
+                          </FormItem>
+                        </RadioGroup>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -279,55 +235,58 @@ export default function EarlyAccessPage() {
                 />
               )}
 
+                  {watchPurpose === "wishlistPaid" && (
+                    <Card className="bg-gray-50 border border-gray-200 rounded-lg">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="flex justify-between items-center text-base">
+                          <span>Payment Amount</span>
+                          <span className="font-bold text-blue-600">$10.00 USD</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <InputField name="cardNumber" label="Card Number" placeholder="1234 5678 9012 3456" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <InputField name="expiry" label="Expiry Date" placeholder="MM/YY" />
+                          <InputField name="cvc" label="CVC" placeholder="123" />
+                        </div>
+                        <p className="text-sm text-gray-500 mt-2">Fully refundable anytime before launch.</p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              )}
+
               {/* Submit Button */}
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg">
+              <Button 
+                type="submit" 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-base"
+              >
                 {watchPurpose === "wishlistPaid" ? "Join Wishlist (Priority)" :
                 watchPurpose === "wishlistFree" ? "Join Wishlist" :
                 "Submit Question"}
               </Button>
 
-              <p className="text-center text-xs text-gray-500">
+              <p className="text-center text-xs text-gray-500 mt-4">
                 By submitting, you agree to our{" "}
-                <Link href="/privacy" className="text-blue-500 underline">Privacy Policy</Link>.
+                <Link href="/privacy" className="text-blue-500 underline hover:text-blue-700">Privacy Policy</Link>.
               </p>
-
             </form>
           </Form>
         </div>
       </div>
 
       {/* Right: Image */}
-      <div
-        className="hidden lg:flex flex-col justify-center items-center relative bg-cover bg-center"
-        style={{ backgroundImage: "url('/painterly-bg.png')" }}
-      >
-        <div className="flex flex-col">
-            <div className="bg-blue-500 text-white rounded-xl p-6 shadow-none w-full px-auto">
-              <h2 className="text-2xl font-bold mb-4">🚀 Early Access Offer</h2>
-              <ul className="space-y-2">
-                <li className="flex items-center">
-                  <CheckIcon className="w-5 h-5 text-green-300 mr-2" />
-                  <span>Exclusive discounts for early adopters</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon className="w-5 h-5 text-green-300 mr-2" />
-                  <span>Priority access to new features</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon className="w-5 h-5 text-green-300 mr-2" />
-                  <span>Direct line to our development team</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Bottom: Heading and Subheading */}
-            <div className="mt-8">
-              <h1 className="text-4xl font-bold mb-4">Join the Future Today</h1>
-              <p className="text-xl text-gray-400">
-                Be among the first to experience our cutting-edge platform and transform the way you work.
-              </p>
-            </div>
+      <div className="hidden lg:flex flex-col justify-center items-center relative bg-black h-screen">     
+        {/* Content container */}
+        <div className="relative z-10 text-center px-8">
+          <h1 className="font-headline text-5xl tracking-tight text-foreground font-bold mb-4 text-white">Join the Innovation Wave</h1>
+          <p className="text-lg text-blue-100 max-w-md mx-auto">
+            "Being an early adopter gave us a competitive edge we couldn't have gotten anywhere else."
+          </p>
+          <div className="mt-4 text-blue-100 italic">
+            - Sarah K., Product Director at TechCorp
           </div>
+        </div>
       </div>
     </div>
   );

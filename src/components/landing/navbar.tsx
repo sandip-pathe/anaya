@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/landing/logo";
-import { Menu, MoveRight } from "lucide-react";
+import { Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -11,12 +11,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import WishlistOutlineButton from "../WishlistOutlineButton";
+import Link from "next/link";
 
 const navLinks = [
-  { label: "Try", href: "#" },
-  { label: "Pricing", href: "#" },
-  { label: "Security", href: "#" },
+  { label: "Demo", href: "#demo" },
+  { label: "Benefits", href: "#benefits" },
+  { label: "Features", href: "#summarization" },
+  { label: "FAQ", href: "#faq" },
+  { label: "Try", href: "/subscribe" },
 ];
 
 export default function Navbar() {
@@ -29,19 +31,15 @@ export default function Navbar() {
         <div className="hidden items-center gap-6 md:flex">
           <nav className="flex items-center gap-6">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
-                className="text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="font-body text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" className="text-base">Login</Button>
-            <WishlistOutlineButton/>
-          </div>
         </div>
 
         <div className="md:hidden">
@@ -56,26 +54,22 @@ export default function Navbar() {
               <div className="flex h-full flex-col">
                 <div className="flex-1">
                   <SheetHeader className="p-0 text-left">
-                    <SheetTitle asChild>
+                    <SheetTitle>
                       <Logo />
                     </SheetTitle>
                   </SheetHeader>
                   <nav className="mt-8 flex flex-col gap-6">
                     {navLinks.map((link) => (
-                      <a
+                      <Link
                         key={link.label}
                         href={link.href}
                         className="text-lg font-medium text-foreground"
                         onClick={() => setIsOpen(false)}
                       >
                         {link.label}
-                      </a>
+                      </Link>
                     ))}
                   </nav>
-                </div>
-                <div className="mt-auto flex flex-col gap-2 border-t pt-6">
-                  <Button variant="outline">Login</Button>
-                  <WishlistOutlineButton/>
                 </div>
               </div>
             </SheetContent>

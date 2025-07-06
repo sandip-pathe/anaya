@@ -32,7 +32,7 @@ export default function Faq() {
   return (
     <section id="faq" className="py-16 sm:py-24 bg-[#fef9f4]">
       <div className="container mx-auto px-4">
-      <div className="mx-auto max-w-3xl text-center">
+      <div className="mx-auto max-w-3xl text-center mb-6">
           <h2 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Frequently Asked Questions
           </h2>
