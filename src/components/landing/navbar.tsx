@@ -41,10 +41,8 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" className="text-base">Login</Button>
             <WishlistOutlineButton/>
           </div>
-
         </div>
 
         <div className="md:hidden">
@@ -55,31 +53,30 @@ export default function Navbar() {
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px]">
-              <div className="flex h-full flex-col">
-                <div className="flex-1">
-                  <SheetHeader className="p-0 text-left">
-                    <Logo />
-                    <SheetTitle className="sr-only">Menu</SheetTitle>
-                  </SheetHeader>
-                  <nav className="mt-8 flex flex-col gap-6">
-                    {navLinks.map((link) => (
-                      <Link
-                        key={link.label}
-                        href={link.href}
-                        className="text-lg font-medium text-foreground"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </nav>
-                </div>
-              </div>
+            {/* Fixed SheetContent structure */}
+            <SheetContent side="right" className="w-[300px] flex flex-col">
+              <SheetHeader className="text-left">
+                <Logo />
+                <SheetTitle className="sr-only">Menu</SheetTitle>
+              </SheetHeader>
+              
+              <nav className="mt-8 flex flex-col gap-6">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-lg font-medium text-foreground"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              
+              {/* Buttons container moved to bottom */}
               <div className="mt-auto flex flex-col gap-2 border-t pt-6">
-                  <Button variant="outline">Login</Button>
-                  <WishlistOutlineButton/>
-                </div>
+                <WishlistOutlineButton/>
+              </div>
             </SheetContent>
           </Sheet>
         </div>

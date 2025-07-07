@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller, ControllerRenderProps, FieldValues } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { CheckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Logo from "@/components/landing/logo";
+import { addSubscription } from "./actions";
 
 // Updated form schema with new fields and purpose values
 const formSchema = z.object({
@@ -78,7 +79,7 @@ const formSchema = z.object({
   }
 });
 
-type FormValues = z.infer<typeof formSchema>;
+export type FormValues = z.infer<typeof formSchema>;
 
 export default function EarlyAccessPage() {
   const { toast } = useToast();
@@ -92,17 +93,26 @@ export default function EarlyAccessPage() {
 
   const watchPurpose = form.watch("purpose");
 
-  function onSubmit(data: FormValues) {
-    console.log("Form submission:", data);
-    toast({
-      title: "Success!",
-      description: data.purpose === "wishlistPaid"
-        ? "You've joined our priority wishlist! Payment processed successfully."
-        : data.purpose === "wishlistFree"
-        ? "You've been added to our wishlist!"
-        : "Your question has been submitted! We'll contact you soon.",
-    });
-    form.reset();
+  async function onSubmit(data: FormValues) {
+    try {
+      await addSubscription(data);
+      toast({
+        title: "Success!",
+        description: data.purpose === "wishlistPaid"
+          ? "You've joined our priority wishlist! Payment processed successfully."
+          : data.purpose === "wishlistFree"
+          ? "You've been added to our wishlist!"
+          : "Your question has been submitted! We'll contact you soon.",
+      });
+      form.reset();
+    } catch (error) {
+      console.error("Submission failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Submission Failed",
+        description: "There was a problem submitting your request. Please try again.",
+      });
+    }
   }
 
   // Define InputField props interface to fix type error
@@ -120,7 +130,7 @@ export default function EarlyAccessPage() {
         <FormItem className="w-full text-base">
           <FormLabel className="text-base">{label}</FormLabel>
           <FormControl>
-            <Input className="placeholder:text-base" placeholder={placeholder} {...field} />
+            <Input className="placeholder:text-base" placeholder={placeholder} {...field} value={field.value ?? ""} />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -177,7 +187,19 @@ export default function EarlyAccessPage() {
               {/* Conditional Fields for Wishlist */}
               {(watchPurpose === "wishlistFree" || watchPurpose === "wishlistPaid") && (
                 <div className="space-y-4">
-                  <InputField name="challenges" label="What challenges are you trying to solve?" placeholder="Your answer" />
+                  <FormField
+                    control={form.control}
+                    name="challenges"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-base">What challenges are you trying to solve?</FormLabel>
+                            <FormControl>
+                                <Textarea placeholder="Your answer" {...field} value={field.value ?? ""} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                   />
                   <FormField
                     control={form.control}
                     name="urgency"
@@ -188,7 +210,7 @@ export default function EarlyAccessPage() {
                           <FormControl>
                             <SelectTrigger className="text-base">
                               <SelectValue placeholder="Select urgency" />
-                            </SelectTrigger>
+                            </Trigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="notUrgent" className="text-base">Not urgent</SelectItem>
@@ -260,10 +282,12 @@ export default function EarlyAccessPage() {
               <Button 
                 type="submit" 
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-base"
+                disabled={form.formState.isSubmitting}
               >
-                {watchPurpose === "wishlistPaid" ? "Join Wishlist (Priority)" :
-                watchPurpose === "wishlistFree" ? "Join Wishlist" :
-                "Submit Question"}
+                {form.formState.isSubmitting ? "Submitting..." : 
+                  watchPurpose === "wishlistPaid" ? "Join Wishlist (Priority)" :
+                  watchPurpose === "wishlistFree" ? "Join Wishlist" :
+                  "Submit Question"}
               </Button>
 
               <p className="text-center text-xs text-gray-500 mt-4">
