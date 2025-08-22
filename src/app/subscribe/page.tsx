@@ -80,6 +80,31 @@ const formSchema = z.object({
 
 export type FormValues = z.infer<typeof formSchema>;
 
+// Define InputField props interface
+interface InputFieldProps {
+  name: keyof FormValues;
+  label: string;
+  placeholder?: string;
+  form: any;
+}
+
+// Define InputField as a standalone component
+const InputField: React.FC<InputFieldProps> = ({ form, name, label, placeholder }) => (
+  <FormField
+    control={form.control}
+    name={name}
+    render={({ field }) => (
+      <FormItem className="w-full text-base">
+        <FormLabel className="text-base">{label}</FormLabel>
+        <FormControl>
+          <Input className="placeholder:text-base" placeholder={placeholder} {...field} value={field.value ?? ""} />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+);
+
 export default function EarlyAccessPage() {
   const { toast } = useToast();
 
@@ -87,12 +112,24 @@ export default function EarlyAccessPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       purpose: "wishlistFree",
+      fullName: "",
+      email: "",
+      company: "",
+      jobTitle: "",
+      teamSize: undefined,
+      source: "",
+      challenges: "",
+      urgency: undefined,
+      cardNumber: "",
+      expiry: "",
+      cvc: "",
+      questionText: "",
     },
   });
 
   const watchPurpose = form.watch("purpose");
 
-  async function onSubmit(data: FormValues) {
+  const onSubmit = async (data: FormValues) => {
     try {
       await addSubscription(data);
       toast({
@@ -114,29 +151,6 @@ export default function EarlyAccessPage() {
     }
   }
 
-  // Define InputField props interface to fix type error
-  interface InputFieldProps {
-    name: keyof FormValues;
-    label: string;
-    placeholder?: string;
-  }
-
-  const InputField = ({ name, label, placeholder }: InputFieldProps) => (
-    <FormField
-      control={form.control}
-      name={name}
-      render={({ field }) => (
-        <FormItem className="w-full text-base">
-          <FormLabel className="text-base">{label}</FormLabel>
-          <FormControl>
-            <Input className="placeholder:text-base" placeholder={placeholder} {...field} value={field.value ?? ""} />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  );
-
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
       
@@ -149,12 +163,12 @@ export default function EarlyAccessPage() {
               {/* Common Fields */}
               <div className="space-y-4">
                 <div className="flex flex-col md:flex-row gap-4 w-full">
-                  <InputField name="fullName" label="Full Name" placeholder="Your name"/>
-                  <InputField name="email" label="Email" placeholder="you@example.com"/>
+                  <InputField form={form} name="fullName" label="Full Name" placeholder="Your name"/>
+                  <InputField form={form} name="email" label="Email" placeholder="you@example.com"/>
                 </div>
                 <div className="flex flex-col md:flex-row gap-4 w-full">
-                  <InputField name="company" label="Company (optional)" placeholder="Your company"/>
-                  <InputField name="jobTitle" label="Job Title (optional)" placeholder="Your role"/>
+                  <InputField form={form} name="company" label="Company (optional)" placeholder="Your company"/>
+                  <InputField form={form} name="jobTitle" label="Job Title (optional)" placeholder="Your role"/>
                 </div>
                 
                 <FormField
@@ -265,10 +279,10 @@ export default function EarlyAccessPage() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <InputField name="cardNumber" label="Card Number" placeholder="1234 5678 9012 3456" />
+                        <InputField form={form} name="cardNumber" label="Card Number" placeholder="1234 5678 9012 3456" />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <InputField name="expiry" label="Expiry Date" placeholder="MM/YY" />
-                          <InputField name="cvc" label="CVC" placeholder="123" />
+                          <InputField form={form} name="expiry" label="Expiry Date" placeholder="MM/YY" />
+                          <InputField form={form} name="cvc" label="CVC" placeholder="123" />
                         </div>
                         <p className="text-sm text-gray-500 mt-2">Fully refundable anytime before launch.</p>
                       </CardContent>
