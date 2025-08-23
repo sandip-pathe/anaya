@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import Logo from "@/components/landing/logo";
 import { addSubscription } from "./actions";
+import { Trigger } from "@radix-ui/react-select";
 
 // Updated form schema with new fields and purpose values
 const formSchema = z.object({
@@ -152,9 +153,8 @@ export default function EarlyAccessPage() {
   }
 
   return (
+    <>
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-      
-      {/* Left: Form */}
       <div className="flex flex-col px-8 bg-[#fffaf5] h-full overflow-y-auto my-auto">
       <div className="max-w-lg mx-auto w-full space-y-4 py-8">
       <Logo />       
@@ -223,7 +223,7 @@ export default function EarlyAccessPage() {
                           <FormControl>
                             <SelectTrigger className="text-base">
                               <SelectValue placeholder="Select urgency" />
-                            </Trigger>
+                            </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="notUrgent" className="text-base">Not urgent</SelectItem>
@@ -326,5 +326,6 @@ export default function EarlyAccessPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
