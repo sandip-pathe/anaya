@@ -1,4 +1,4 @@
-# **App Name**: ARIN (Contract & Legal AI Rapid Summarizer)
+# **App Name**: Anaya (Contract & Legal AI Rapid Summarizer)
 
 ## Core Features:
 

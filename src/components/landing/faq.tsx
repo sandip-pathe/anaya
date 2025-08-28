@@ -32,11 +32,11 @@ export default function Faq() {
   return (
     <section id="faq" className="py-16 sm:py-24 bg-[#fef9f4]">
       <div className="container mx-auto px-4">
-      <div className="mx-auto max-w-3xl text-center mb-6">
+        <div className="mx-auto max-w-3xl text-center mb-6">
           <h2 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Frequently Asked Questions
           </h2>
-      </div>
+        </div>
 
         {/* Accordion */}
         <div className="mx-auto max-w-3xl">
@@ -45,7 +45,7 @@ export default function Faq() {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="border-b-2 hover:border-b hover:border-black border-transparent hover:border-b-2"
+                className="border-b-2 hover:border-black border-transparent hover:border-b-2"
               >
                 <AccordionTrigger className="text-left text-xl font-semibold text-gray-900 hover:no-underline">
                   <div className="flex justify-between items-center w-full">
@@ -58,17 +58,14 @@ export default function Faq() {
               </AccordionItem>
             ))}
 
-            <AccordionItem
-              value="item-button"
-              className="border-0"
-            >
+            <AccordionItem value="item-button" className="border-0">
               <AccordionTrigger className="text-left text-xl font-semibold text-gray-900 hover:no-underline">
-                  <div className="flex justify-between items-center w-full">
-                    <span>Ask A Question</span>
+                <div className="flex justify-between items-center w-full">
+                  <span>Ask Your Own Question</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="mt-2 text-base text-gray-600">
-              <WishlistOutlineButton className="mt-4"/>
+                <WishlistOutlineButton className="mt-4" />
               </AccordionContent>
             </AccordionItem>
           </Accordion>

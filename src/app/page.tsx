@@ -1,5 +1,5 @@
 import Navbar from "@/components/landing/navbar";
-import Header from "@/components/landing/header";
+import Header from "@/components/landing/hero";
 import Demo from "@/components/landing/demo";
 import Benefits from "@/components/landing/benefits";
 import Summarization from "@/components/landing/summarization";
@@ -7,6 +7,7 @@ import DataExtraction from "@/components/landing/data-extraction";
 import Cta from "@/components/landing/cta";
 import Faq from "@/components/landing/faq";
 import Footer from "@/components/landing/footer";
+import FollowUpChat from "@/components/landing/chat";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
         <Benefits />
         <Summarization />
         <DataExtraction />
+        <FollowUpChat />
         <Cta />
         <Faq />
       </main>

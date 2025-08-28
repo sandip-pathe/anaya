@@ -1,55 +1,57 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import type { Metadata } from "next";
+import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from "@/components/theme-provider";
 
-const title = 'Arin | AI Legal Summarizer';
-const description = 'AI-Powered Legal Summaries in Seconds. Save hours on document review with Arin, the AI assistant designed for legal professionals. Get clear, concise summaries of contracts, case files, and more.';
-const url = 'https://arin.ai';
+const title = "Anaya | AI Legal Summarizer";
+const description =
+  "AI-Powered Legal Summaries in Seconds. Save hours on document review with Anaya, the AI assistant designed for legal professionals. Get clear, concise summaries of contracts, case files, and more.";
+const url = "https://Anaya.ai";
 
 export const metadata: Metadata = {
   metadataBase: new URL(url),
   title: {
     default: title,
-    template: `%s | Arin`,
+    template: `%s | Anaya`,
   },
   description,
   keywords: [
-    'legal tech', 
-    'ai summarizer', 
-    'legal documents', 
-    'contract analysis', 
-    'legal ai',
-    'document review automation',
-    'ai for lawyers'
+    "legal tech",
+    "ai summarizer",
+    "legal documents",
+    "contract analysis",
+    "legal ai",
+    "document review automation",
+    "ai for lawyers",
   ],
-  authors: [{ name: 'The Arin Team', url: url }],
-  creator: 'The Arin Team',
+  authors: [{ name: "The Anaya Team", url: url }],
+  creator: "The Anaya Team",
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
+    type: "website",
+    locale: "en_US",
     url,
     title,
     description,
     siteName: title,
     images: [
       {
-        url: 'https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/demo.png',
+        url: "https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/demo.png",
         width: 1200,
         height: 630,
-        alt: 'An illustration of the Arin application interface for legal document summarization.',
+        alt: "An illustration of the Anaya application interface for legal document summarization.",
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
     title,
     description,
-    images: ['https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/demo.png'],
-    creator: '@arin_ai',
+    images: [
+      "https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/demo.png",
+    ],
+    creator: "@Anaya_ai",
   },
 };
-
 
 export default function RootLayout({
   children,
@@ -60,8 +62,15 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@400;600;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="font-body antialiased">
         <ThemeProvider

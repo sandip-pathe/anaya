@@ -2,10 +2,13 @@ import Image from "next/image";
 
 export default function Demo() {
   return (
-    <section id="demo" className="py-16 sm:py-24 bg-secondary dark:from-gray-900 dark:to-blue-900/20">
+    <section
+      id="demo"
+      className="py-16 sm:py-24 bg-secondary dark:from-gray-900 dark:to-blue-900/20"
+    >
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl">
-        <div className="mb-8 flex justify-center">
+          <div className="mb-8 flex justify-center">
             <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white rounded-full shadow-md">
               <div className="h-3 w-3 rounded-full bg-red-200 animate-pulse"></div>
               <span className="text-sm font-medium text-foreground dark:text-gray-300">
@@ -25,7 +28,7 @@ export default function Demo() {
               </div>
               <Image
                 src="https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/demo.png"
-                alt="Arin App Demo"
+                alt="Anaya App Demo"
                 width={1366}
                 height={694}
                 className="w-full h-auto object-contain"

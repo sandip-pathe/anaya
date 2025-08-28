@@ -24,7 +24,7 @@ export default function Footer() {
               <h2 className="font-headline text-3xl sm:text-3xl font-bold tracking-tight">
                 Save Hours
               </h2>
-              <WishlistOutlineButton className="mt-6"/>
+              <WishlistOutlineButton className="mt-6" />
             </div>
 
             {/* Right: Logo & Links */}
@@ -40,24 +40,36 @@ export default function Footer() {
                       {link.label}
                     </Link>
                     {index < navLinks.length - 1 && (
-                      <span className="hidden md:inline text-muted-foreground">--</span>
+                      <span className="hidden md:inline text-muted-foreground">
+                        --
+                      </span>
                     )}
                   </React.Fragment>
                 ))}
               </nav>
             </div>
           </div>
-          
+
           {/* Bottom: Copyright & Legal Links */}
           <div className="flex flex-col md:flex-row justify-between items-center w-full text-sm mt-4 gap-4">
             <p className="text-foreground/60 order-2 md:order-1">
-              &copy; {currentYear} Spur. All rights reserved.
+              &copy; {currentYear}{" "}
+              <a className="hover:underline cursor-pointer" href="#">
+                Anaya.
+              </a>{" "}
+              All rights reserved.
             </p>
             <div className="flex items-center gap-4 order-1 md:order-2">
-              <Link href="/privacy-policy" className="hover:underline whitespace-nowrap">
+              <Link
+                href="/privacy-policy"
+                className="hover:underline whitespace-nowrap"
+              >
                 Privacy Policy
               </Link>
-              <Link href="/terms-of-service" className="hover:underline whitespace-nowrap">
+              <Link
+                href="/terms-of-service"
+                className="hover:underline whitespace-nowrap"
+              >
                 Terms of Service
               </Link>
             </div>

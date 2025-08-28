@@ -1,5 +1,5 @@
 // components/WishlistButton.tsx
-"use client"
+"use client";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
@@ -16,7 +16,7 @@ export default function WishlistButton({ className }: WishlistButtonProps) {
       onClick={() => router.push("/subscribe")}
       className={`bg-blue-950 hover:bg-black gap-2 hover:gap-4 text-base ${className}`}
     >
-      <p>Join the Wishlist</p>
+      <p>⚡ Try Anaya Now (Free Demo)</p>
       <p>➔</p>
     </Button>
   );

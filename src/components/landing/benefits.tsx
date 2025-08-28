@@ -1,14 +1,21 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, ShieldCheck, UserCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  CheckCircle2,
+  ShieldCheck,
+  UserCheck,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 const benefits = [
   {
     icon: <CheckCircle2 className="h-8 w-8 text-black-300" />,
     title: "Save Hours Every Week",
-    description: "AI highlights key points, deadlines, and risks — no more manual skimming.",
+    description:
+      "AI highlights key points, deadlines, and risks — no more manual skimming.",
   },
   {
     icon: <UserCheck className="h-8 w-8 text-black-300" />,
@@ -18,17 +25,20 @@ const benefits = [
   {
     icon: <ShieldCheck className="h-8 w-8 text-black-300" />,
     title: "Secure & Private",
-    description: "Your documents are never stored — instant processing, instant results.",
+    description:
+      "Your documents are never stored — instant processing, instant results.",
   },
   {
     icon: <CheckCircle2 className="h-8 w-8 text-black-300" />,
     title: "Intelligent Analysis",
-    description: "Context-aware insights tailored to your specific legal domain.",
+    description:
+      "Context-aware insights tailored to your specific legal domain.",
   },
   {
     icon: <UserCheck className="h-8 w-8 text-black-300" />,
     title: "Seamless Integration",
-    description: "Works with your existing tools and document management systems.",
+    description:
+      "Works with your existing tools and document management systems.",
   },
 ];
 
@@ -50,11 +60,11 @@ export default function Benefits() {
   // Auto slide functionality
   useEffect(() => {
     if (isPaused) return;
-    
+
     const interval = setInterval(() => {
       nextSlide();
     }, 5000);
-    
+
     return () => clearInterval(interval);
   }, [isPaused, nextSlide]);
 
@@ -83,9 +93,12 @@ export default function Benefits() {
   };
 
   return (
-    <section id="benefits" className="py-16 sm:py-24 bg-blue-950 relative overflow-hidden">
+    <section
+      id="benefits"
+      className="py-16 sm:py-24 bg-blue-950 relative overflow-hidden"
+    >
       <div className="container mx-auto px-4 relative z-10">
-        <div 
+        <div
           ref={sliderRef}
           className="flex transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${calculateOffset()}px)` }}
@@ -96,13 +109,15 @@ export default function Benefits() {
           onMouseLeave={() => setIsPaused(false)}
         >
           {benefits.map((benefit, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="flex-shrink-0 w-full sm:w-2/3 md:w-1/2 lg:w-1/3 px-4"
             >
-              <Card 
+              <Card
                 className={`text-center rounded-2xl border-4 border-white bg-white transition-all duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-xl ${
-                  index === currentIndex ? "ring-4 ring-blue-400 scale-[1.02]" : "opacity-90 border-black"
+                  index === currentIndex
+                    ? "ring-4 ring-blue-400 scale-[1.02]"
+                    : "opacity-90 border-black"
                 }`}
               >
                 <CardHeader>
@@ -121,15 +136,15 @@ export default function Benefits() {
       </div>
 
       {/* Navigation arrows */}
-      <button 
+      <button
         onClick={prevSlide}
         className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none"
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-6 w-6 text-blue-900" />
       </button>
-      
-      <button 
+
+      <button
         onClick={nextSlide}
         className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none"
         aria-label="Next slide"
@@ -144,8 +159,8 @@ export default function Benefits() {
             key={index}
             onClick={() => setCurrentIndex(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentIndex 
-                ? "bg-white scale-125" 
+              index === currentIndex
+                ? "bg-white scale-125"
                 : "bg-white/50 hover:bg-white/80"
             }`}
             aria-label={`Go to slide ${index + 1}`}
