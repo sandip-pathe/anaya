@@ -27,7 +27,7 @@ export default function Demo() {
                 </div>
               </div>
               <Image
-                src="https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/demo.png"
+                src="https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/0.png"
                 alt="Anaya App Demo"
                 width={1366}
                 height={694}

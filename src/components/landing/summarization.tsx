@@ -11,7 +11,7 @@ export default function Summarization() {
   return (
     <section
       id="summarization"
-      className="py-16 sm:py-24 bg-secondary to-white dark:from-gray-900 dark:to-gray-800"
+      className="py-16 sm:py-24 bg-background to-white dark:from-gray-900 dark:to-gray-800"
     >
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid items-center gap-12 md:grid-cols-2">
@@ -44,7 +44,7 @@ export default function Summarization() {
               <div className="absolute -inset-4 rounded-2xl"></div>
               <div className="relative rounded-2xl border-2 border-black bg-white overflow-hidden ring-1 ring-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:shadow-gray-900/30 dark:ring-gray-700">
                 <Image
-                  src="https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/summary_demo.png"
+                  src="https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/1.png"
                   alt="Summarization feature illustration"
                   width={600}
                   height={400}

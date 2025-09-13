@@ -2,7 +2,7 @@
 import Image from "next/image";
 
 const features = [
-  "Automatically extract names, dates, amounts, and jurisdictions.",
+  "Automatically extract parties, obligations, conditions, rights etc.",
   "Visualize key data points in easy-to-understand charts.",
   "Export extracted data for further analysis or reporting.",
 ];
@@ -11,7 +11,7 @@ export default function DataExtraction() {
   return (
     <section
       id="data-extraction"
-      className="py-12 sm:py-16 md:py-24 bg-background dark:from-gray-800 dark:to-gray-900"
+      className="py-12 sm:py-16 md:py-24 bg-secondary dark:from-gray-800 dark:to-gray-900"
     >
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid items-center gap-12 md:gap-12 md:grid-cols-2">
@@ -20,7 +20,7 @@ export default function DataExtraction() {
               <div className="absolute -inset-4 rounded-2xl"></div>
               <div className="relative rounded-2xl border-2 border-black bg-white overflow-hidden ring-1 ring-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:shadow-gray-900/30 dark:ring-gray-700">
                 <Image
-                  src="https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/data-demo.png"
+                  src="https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/3.png"
                   alt="Data extraction feature illustration"
                   width={600}
                   height={400}
