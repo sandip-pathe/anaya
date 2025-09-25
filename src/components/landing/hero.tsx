@@ -16,8 +16,8 @@ export default function Header() {
             <p>Anaya.</p>
           </div>
           <p className="mt-6 text-lg text-foreground/60">
-            From contracts to case files — Anaya highlights what matters, so you
-            never drown in paperwork again.
+            From contracts to case files — accurate, secure, and shareable
+            important information in seconds.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <WishlistButton className="mt-8" />
@@ -27,3 +27,12 @@ export default function Header() {
     </section>
   );
 }
+
+// Your Firm’s Private Intelligent Agents
+// Your Data.
+// Your Agents.
+// Your AI.
+// Deploy secure, firm-specific AI agents on your own cloud. Build and
+// run agents tailored to your workflows, keep full control of your
+// data, and leverage AI without ever sharing sensitive information
+// outside your firm.

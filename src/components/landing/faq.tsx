@@ -7,8 +7,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "../ui/button";
-import { MoveRight } from "lucide-react";
-import WishlistOutlineButton from "../WishlistOutlineButton";
+import { useRouter } from "next/navigation";
+import ContactModal from "../contact";
+import { FaWhatsapp } from "react-icons/fa6";
 
 const faqs = [
   {
@@ -29,6 +30,7 @@ const faqs = [
 ];
 
 export default function Faq() {
+  const router = useRouter();
   return (
     <section id="faq" className="py-16 sm:py-24 bg-[#fef9f4]">
       <div className="container mx-auto px-4">
@@ -64,8 +66,16 @@ export default function Faq() {
                   <span>Ask Your Own Question</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="mt-2 text-base text-gray-600">
-                <WishlistOutlineButton className="mt-4" />
+              <AccordionContent className="text-lg text-gray-600 items-start justify-center">
+                <ContactModal />
+                <button
+                  className="ml-4 bg-white p-1 border rounded-md hover:bg-gray-100"
+                  onClick={() => {
+                    window.open("https://wa.me/+918767394523", "_blank");
+                  }}
+                >
+                  <p className="font-semibold text-green-600">WhatsApp</p>
+                </button>
               </AccordionContent>
             </AccordionItem>
           </Accordion>

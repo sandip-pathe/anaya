@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/landing/logo";
 import WishlistOutlineButton from "../WishlistOutlineButton";
@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 
 const navLinks = [
-  { label: "Try", href: "/subscribe" },
+  { label: "Try", href: "https://app.anaya.legal" },
   { label: "Demo", href: "#demo" },
   { label: "Features", href: "#summarization" },
   { label: "FAQ", href: "#faq" },
@@ -41,7 +41,7 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <WishlistOutlineButton/>
+            <WishlistOutlineButton />
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export default function Navbar() {
                 <Logo />
                 <SheetTitle className="sr-only">Menu</SheetTitle>
               </SheetHeader>
-              
+
               <nav className="mt-8 flex flex-col gap-6">
                 {navLinks.map((link) => (
                   <Link
@@ -72,10 +72,9 @@ export default function Navbar() {
                   </Link>
                 ))}
               </nav>
-              
-              {/* Buttons container moved to bottom */}
+
               <div className="mt-auto flex flex-col gap-2 border-t pt-6">
-                <WishlistOutlineButton/>
+                <WishlistOutlineButton />
               </div>
             </SheetContent>
           </Sheet>

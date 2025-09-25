@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 interface WishlistButtonProps {
-  className?: string; // Allows adding extra styles if needed
+  className?: string;
 }
 
 export default function WishlistButton({ className }: WishlistButtonProps) {
@@ -13,7 +13,7 @@ export default function WishlistButton({ className }: WishlistButtonProps) {
   return (
     <Button
       size="lg"
-      onClick={() => router.push("/subscribe")}
+      onClick={() => router.push(`https://app.anaya.legal`)}
       className={`bg-blue-950 hover:bg-black gap-2 hover:gap-4 text-base ${className}`}
     >
       <p>⚡ Try Anaya Now (Free Demo)</p>

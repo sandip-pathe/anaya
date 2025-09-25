@@ -22,7 +22,7 @@ export default function Summarization() {
               </h2>
               <p className="my-16 text-xl text-gray-700 dark:text-gray-300">
                 Don’t waste hours skimming. Anaya extracts key clauses,
-                obligations, and risks — like a junior associate who never
+                obligations, and risks; like a junior associate who never
                 sleeps.
               </p>
               <ul className="space-y-4">

@@ -16,7 +16,7 @@ export default function WishlistOutlineButton({
     <Button
       variant="outline"
       size="lg"
-      onClick={() => router.push("/subscribe")}
+      onClick={() => router.push(`https://app.anaya.legal`)}
       className={`hover:bg-black hover:text-white gap-2 hover:gap-4 text-base ${className}`}
     >
       <p>⚡ Try Anaya Now</p>
