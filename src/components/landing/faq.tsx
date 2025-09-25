@@ -6,10 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
 import ContactModal from "../contact";
-import { FaWhatsapp } from "react-icons/fa6";
 
 const faqs = [
   {
@@ -30,7 +27,6 @@ const faqs = [
 ];
 
 export default function Faq() {
-  const router = useRouter();
   return (
     <section id="faq" className="py-16 sm:py-24 bg-[#fef9f4]">
       <div className="container mx-auto px-4">
