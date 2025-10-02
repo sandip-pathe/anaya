@@ -1,7 +1,9 @@
+"use client";
+
 import Logo from "@/components/landing/logo";
 import Link from "next/link";
-import WishlistOutlineButton from "../WishlistOutlineButton";
 import React from "react";
+import { Button } from "../ui/button";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -12,7 +14,6 @@ export default function Footer() {
     { label: "Features", href: "#summarization" },
     { label: "About", href: "#" },
   ];
-
   return (
     <footer className="relative overflow-hidden bg-blue-950">
       <div className="relative container max-w-5xl mx-auto px-4 pt-16 flex justify-center">
@@ -22,9 +23,17 @@ export default function Footer() {
             {/* Left: Heading & CTA */}
             <div className="mb-8 md:mb-0">
               <h2 className="font-headline text-3xl sm:text-3xl font-bold tracking-tight">
-                Save Hours
+                Join the waitlist for early access
               </h2>
-              <WishlistOutlineButton className="mt-6" />
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => window.open("https://app.anaya.legal")}
+                className={`hover:bg-black hover:text-white gap-2 hover:gap-4 mt-4 text-base`}
+              >
+                <p>⚡ Try Anaya Now</p>
+                <p>➔</p>
+              </Button>
             </div>
 
             {/* Right: Logo & Links */}

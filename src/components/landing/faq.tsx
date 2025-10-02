@@ -10,19 +10,19 @@ import ContactModal from "../contact";
 
 const faqs = [
   {
-    question: "Is this only for lawyers?",
+    question: "How is this different from other legal AI tools?",
     answer:
-      "Yes — we’ve designed this tool specifically for legal documents. It’s not for general-purpose summarization.",
+      "Most legal AI products are SaaS tools that require you to upload your sensitive data to their servers. Anaya is different. We provide a secure AI layer that operates on top of your firm's existing data, wherever it resides. You get the power of custom-built AI without compromising on security or control.",
   },
   {
-    question: "What documents does it support?",
+    question: "Do we need a technical team to build agents and workflows?",
     answer:
-      "Currently PDF and Word files — contracts, agreements, memos, case files.",
+      "No. Anaya is designed for legal professionals. We provide templates for common legal workflows, and our intuitive interface allows you to create and customize AI agents with no coding required. Our team will also work with you during onboarding to set up your initial workflows. Having a technical team can be beneficial for more complex integrations, but it's not a requirement.",
   },
   {
-    question: "How secure is this?",
+    question: "What kind of data can Anaya work with?",
     answer:
-      "We never store your documents. They’re processed instantly and securely.",
+      "Anaya can connect to a wide range of data sources, including popular document management systems, email archives, and internal databases. It supports various file formats, including PDF, Word, and more. If you have specific data sources in mind, we can discuss integration options during our consultation.",
   },
 ];
 

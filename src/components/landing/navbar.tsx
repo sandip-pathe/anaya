@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/landing/logo";
-import WishlistOutlineButton from "../WishlistOutlineButton";
 import { Menu } from "lucide-react";
 import {
   Sheet,
@@ -13,6 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const navLinks = [
   { label: "Try", href: "https://app.anaya.legal" },
@@ -23,7 +23,7 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
-
+  const router = useRouter();
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
@@ -41,7 +41,15 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <WishlistOutlineButton />
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => router.push(`https://app.anaya.legal`)}
+              className={`hover:bg-black hover:text-white gap-2 hover:gap-4 text-base mt-0`}
+            >
+              <p>⚡ Try Anaya Now</p>
+              <p>➔</p>
+            </Button>
           </div>
         </div>
 
@@ -74,7 +82,15 @@ export default function Navbar() {
               </nav>
 
               <div className="mt-auto flex flex-col gap-2 border-t pt-6">
-                <WishlistOutlineButton />
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => router.push(`https://app.anaya.legal`)}
+                  className={`hover:bg-black hover:text-white gap-2 hover:gap-4 text-base mt-4`}
+                >
+                  <p>⚡ Try Anaya Now</p>
+                  <p>➔</p>
+                </Button>
               </div>
             </SheetContent>
           </Sheet>

@@ -1,69 +1,72 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, UserCheck } from "lucide-react";
-import { RiFlashlightFill } from "react-icons/ri";
-import { HiMiniPencilSquare } from "react-icons/hi2";
-import { FaListCheck } from "react-icons/fa6";
-import { FiShare2 } from "react-icons/fi";
+import { BsDatabaseFillLock, BsLightningFill } from "react-icons/bs";
+import { RiFunctionAddLine } from "react-icons/ri";
+import { LiaNetworkWiredSolid } from "react-icons/lia";
+import { MdAutoGraph } from "react-icons/md";
+import { IoShieldCheckmark } from "react-icons/io5";
+import { SiGitconnected } from "react-icons/si";
 
 const benefits = [
   {
-    icon: <CheckCircle2 className="h-8 w-8 text-blue-600" />,
-    title: "Accurate Case Insights",
+    icon: <LiaNetworkWiredSolid className="h-8 w-8 text-blue-600" />,
+    title: "Smarter Workflows",
     description:
-      "Get precise, citation-backed summaries of your documents, so you understand key points instantly.",
+      "Stop repetitive tasks. Let your lawyers focus on strategy, argumentation, and client value.",
   },
   {
-    icon: <RiFlashlightFill className="h-8 w-8 text-blue-600" />,
-    title: "Quick Skim & Review",
+    icon: <MdAutoGraph className="h-8 w-8 text-blue-600" />,
+    title: "Scalable Intelligence",
     description:
-      "Scan contracts, judgments, or filings in minutes without missing critical clauses or obligations.",
+      "Unlimited AI agents running in parallel on your firm’s data. Grow capabilities without limits.",
   },
   {
-    icon: <HiMiniPencilSquare className="h-8 w-8 text-blue-600" />,
-    title: "Drafting Support",
+    icon: <RiFunctionAddLine className="h-8 w-8 text-blue-600" />,
+    title: "Your own Agents",
     description:
-      "Use extracted clauses and obligations to streamline drafting and review, reducing manual work.",
+      "Design agents that reflect your workflows, culture, and priorities. Your AI works your way.",
   },
   {
-    icon: <FaListCheck className="h-8 w-8 text-blue-600" />,
-    title: "Plain English Summaries",
+    icon: <SiGitconnected className="h-8 w-8 text-blue-600" />,
+    title: "Seamless Integration",
     description:
-      "Turn complex legal language into clear explanations, making it easy to act on insights.",
+      "Connect to DMS, email, and workflow systems. Anaya agents operate within your tools without disruption.",
   },
   {
-    icon: <FiShare2 className="h-8 w-8 text-blue-600" />,
-    title: "Shareable & Collaborative",
+    icon: <IoShieldCheckmark className="h-8 w-8 text-blue-600" />,
+    title: "Future-Proof Your Firm",
     description:
-      "Export summaries as PDFs or links, so colleagues or clients can access insights instantly.",
+      "Flexible deployment, modular agents, and model choices ensure your firm evolves with AI securely.",
   },
   {
-    icon: <UserCheck className="h-8 w-8 text-blue-600" />,
-    title: "Secure & Private",
+    icon: <BsLightningFill className="h-8 w-8 text-blue-600" />,
+    title: "Business Intelligence",
     description:
-      "All processing is confidential — documents stay with you unless you choose otherwise.",
+      "Turn raw legal data into actionable dashboards, reports, and firm-wide insights.",
   },
 ];
 
 export default function Benefits() {
   return (
-    <section className="py-16 sm:py-24">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="items-center justify-center grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <section className="py-16 sm:py-24 bg-gray-100 dark:bg-black">
+      <div className="container mx-auto px-4 max-w-5xl">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
           {benefits.map((benefit, index) => (
             <Card
               key={index}
-              className="text-center bg-secondary border-none rounded-xl shadow-md hover:shadow-lg transition-all duration-300 "
+              className="text-center border-none bg-background shadow-sm p-0 hover:shadow-md transition-shadow duration-300"
             >
               <CardHeader>
-                <div className="flex justify-center mb-2">{benefit.icon}</div>
-                <CardTitle className="text-xl font-semibold text-gray-700">
+                <div className="flex justify-center">{benefit.icon}</div>
+                <CardTitle className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200">
                   {benefit.title}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-500">{benefit.description}</p>
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                  {benefit.description}
+                </p>
               </CardContent>
             </Card>
           ))}
