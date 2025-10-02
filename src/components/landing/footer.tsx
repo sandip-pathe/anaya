@@ -4,20 +4,23 @@ import Logo from "@/components/landing/logo";
 import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
+  const router = useRouter();
+
   const navLinks = [
     { label: "Demo", href: "#demo" },
     { label: "Benefits", href: "#benefits" },
-    { label: "Features", href: "#summarization" },
+    { label: "Features", href: "#intelligence-hub" },
     { label: "About", href: "#" },
   ];
   return (
-    <footer className="relative overflow-hidden bg-blue-950">
+    <footer className="relative overflow-hidden bg-primary">
       <div className="relative container max-w-5xl mx-auto px-4 pt-16 flex justify-center">
-        <div className="rounded-2xl rounded-b-none bg-white backdrop-blur-md shadow-2xl shadow-blue-500/20 transform transition-transform duration-500 hover:scale-[1.02] p-8 w-full">
+        <div className="rounded-2xl rounded-b-none bg-background backdrop-blur-md shadow-2xl shadow-blue-500/20 transform transition-transform duration-500 hover:scale-[1.02] p-8 w-full">
           {/* Top Section */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b-2 pb-8 border-black">
             {/* Left: Heading & CTA */}
@@ -28,7 +31,9 @@ export default function Footer() {
               <Button
                 variant="outline"
                 size="lg"
-                onClick={() => window.open("https://app.anaya.legal")}
+                onClick={() => {
+                  router.push("/subscribe");
+                }}
                 className={`hover:bg-black hover:text-white gap-2 hover:gap-4 mt-4 text-base`}
               >
                 <p>⚡ Try Anaya Now</p>

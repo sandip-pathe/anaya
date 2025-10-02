@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { FaWhatsapp } from "react-icons/fa";
 import ContactModal from "../contact";
 
 const faqs = [
@@ -28,9 +29,9 @@ const faqs = [
 
 export default function Faq() {
   return (
-    <section id="faq" className="py-16 sm:py-24 bg-[#fef9f4]">
+    <section id="faq" className="py-16 sm:py-24 bg-background">
       <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-3xl text-center mb-6">
+        <div className="mx-auto max-w-4xl text-center mb-6">
           <h2 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Frequently Asked Questions
           </h2>
@@ -45,7 +46,7 @@ export default function Faq() {
                 value={`item-${index}`}
                 className="border-b-2 hover:border-black border-transparent hover:border-b-2"
               >
-                <AccordionTrigger className="text-left text-xl font-semibold text-gray-900 hover:no-underline">
+                <AccordionTrigger className="text-left text-lg md:text-xl md:font-semibold text-gray-900 hover:no-underline">
                   <div className="flex justify-between items-center w-full">
                     <span>{faq.question}</span>
                   </div>
@@ -57,21 +58,26 @@ export default function Faq() {
             ))}
 
             <AccordionItem value="item-button" className="border-0">
-              <AccordionTrigger className="text-left text-xl font-semibold text-gray-900 hover:no-underline">
+              <AccordionTrigger className="text-left text-lg md:text-xl md:font-semibold text-gray-900 hover:no-underline">
                 <div className="flex justify-between items-center w-full">
                   <span>Ask Your Own Question</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="text-lg text-gray-600 items-start justify-center">
-                <ContactModal />
-                <button
-                  className="ml-4 bg-white p-1 border rounded-md hover:bg-gray-100"
-                  onClick={() => {
-                    window.open("https://wa.me/+918767394523", "_blank");
-                  }}
-                >
-                  <p className="font-semibold text-green-600">WhatsApp</p>
-                </button>
+              <AccordionContent>
+                <div className="flex items-center justify-start space-x-4 mt-4">
+                  {/* Contact Form Modal */}
+                  <ContactModal />
+
+                  {/* WhatsApp Button */}
+                  <button
+                    className="flex items-center justify-center w-12 h-12 text-green-500 rounded-full hover:scale-110"
+                    onClick={() => {
+                      window.open("https://wa.me/+918767394523", "_blank");
+                    }}
+                  >
+                    <FaWhatsapp size={24} />
+                  </button>
+                </div>
               </AccordionContent>
             </AccordionItem>
           </Accordion>

@@ -7,40 +7,40 @@ export default function Demo() {
   return (
     <section
       id="demo"
-      className="sm:py-16 py-8 bg-white dark:from-gray-900 dark:to-blue-900/20"
+      className="bg-white py-16 dark:from-gray-900 dark:to-blue-900/20 sm:py-24"
     >
       <div className="container mx-auto px-4">
         {/* Section Heading */}
-        <div className="mx-auto max-w-3xl text-center mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground dark:text-gray-100">
+        <div className="mx-auto mb-12 max-w-3xl text-center">
+          <h2 className="font-headline text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
             Inside the AI Factory
           </h2>
-          <p className="mt-2 text-sm sm:text-base text-muted-foreground dark:text-gray-300">
-            Watch a live workflow — highlight risks, extract key data, and
-            generate actionable insights in seconds.
+          <p className="mt-4 text-base text-muted-foreground dark:text-gray-300 sm:text-lg">
+            Watch how a single workflow in the Anaya AI Factory can automate
+            complex tasks.
           </p>
         </div>
 
-        {/* Live Demo Badge */}
-        <div className="mb-6 flex justify-center">
-          <div className="inline-flex items-center space-x-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-white rounded-full shadow-md">
-            <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-red-200 animate-pulse"></div>
-            <span className="text-xs sm:text-sm font-medium text-foreground dark:text-gray-300">
+        {/* Live Demo Badge - No changes needed, it's already responsive */}
+        <div className="mb-8 flex justify-center">
+          <div className="inline-flex items-center space-x-2 rounded-full bg-white px-3 py-1.5 shadow-md sm:px-4 sm:py-2">
+            <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-200 sm:h-3 sm:w-3"></div>
+            <span className="text-xs font-medium text-foreground dark:text-gray-300 sm:text-sm">
               Live Demo
             </span>
           </div>
         </div>
 
-        {/* Demo Window */}
-        <div className="relative max-w-4xl mx-auto overflow-hidden rounded-xl sm:rounded-2xl border-2 sm:border-4 border-black/80 dark:border-gray-800 shadow-md sm:shadow-none">
+        {/* Demo Window - Increased max-width on larger screens */}
+        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-xl border-2 border-black/80 shadow-md dark:border-gray-800 sm:rounded-2xl sm:border-4 lg:max-w-6xl">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-700/10 dark:to-purple-700/10"></div>
           <div className="relative bg-black dark:bg-gray-800">
-            {/* Top Bar */}
-            <div className="flex justify-center items-center p-1.5 sm:p-2 bg-gradient-to-r from-blue-600 to-purple-600">
+            {/* Top Bar - No changes needed */}
+            <div className="flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 p-1.5 sm:p-2">
               <div className="flex space-x-1 sm:space-x-1.5">
-                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-400"></div>
-                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-400"></div>
-                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-400"></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-red-400 sm:h-3 "></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-yellow-400 sm:h-3 "></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-green-400  sm:h-3"></div>
               </div>
             </div>
             {/* Demo Image */}
@@ -49,7 +49,7 @@ export default function Demo() {
               alt="Anaya Agent Demo"
               width={1366}
               height={694}
-              className="w-full h-auto object-contain cursor-pointer"
+              className="h-auto w-full cursor-pointer object-contain"
               data-ai-hint="app interface"
               onClick={() => window.open("https://app.anaya.legal", "_blank")}
             />
@@ -57,22 +57,23 @@ export default function Demo() {
         </div>
 
         {/* Demo Description / CTA */}
-        <div className="mt-6 text-center max-w-2xl mx-auto">
-          {/* Hidden on small screens */}
-          <p className="hidden sm:block text-sm sm:text-md text-muted-foreground dark:text-gray-300 mb-4">
-            Watch how a single workflow in the Anaya AI Factory can automate
-            complex tasks. In this example, multiple AI agents collaborate on a
-            set of documents. Imagine scaling this across dozens of workflows,
-            all running in parallel, all tailored to your firm's unique
-            processes.
+        <div className="mx-auto mt-8 max-w-3xl text-center lg:mt-12">
+          {/* Made this paragraph visible on medium screens and up */}
+          <p className="hidden text-base text-muted-foreground dark:text-gray-300 md:block">
+            In this example, multiple AI agents—a summarizer, a key-data
+            extractor, and a risk-highlighter—collaborate on a set of documents.{" "}
+            <span className="hidden md:inline">
+              Imagine scaling this across dozens of workflows, all running in
+              parallel, all tailored to your firm's unique processes.
+            </span>
           </p>
           <Button
             size="lg"
             variant="outline"
             onClick={() => window.open("https://app.anaya.legal", "_blank")}
-            className="w-full sm:w-auto hover:bg-black hover:text-white gap-2 hover:gap-4 text-sm sm:text-base"
+            className="mt-6 w-full gap-2 text-sm hover:bg-black hover:text-white hover:gap-4 sm:w-auto sm:text-base"
           >
-            <span>⚡ Try it now</span>
+            <span>⚡ See how it works</span>
             <span>➔</span>
           </Button>
         </div>

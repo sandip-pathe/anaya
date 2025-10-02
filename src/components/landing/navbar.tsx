@@ -17,7 +17,8 @@ import { useRouter } from "next/navigation";
 const navLinks = [
   { label: "Try", href: "https://app.anaya.legal" },
   { label: "Demo", href: "#demo" },
-  { label: "Features", href: "#summarization" },
+  { label: "Benefit", href: "#benefits" },
+  { label: "Features", href: "#intelligence-hub" },
   { label: "FAQ", href: "#faq" },
 ];
 
@@ -42,12 +43,12 @@ export default function Navbar() {
           </nav>
           <div className="flex items-center gap-2">
             <Button
-              variant="outline"
+              variant="default"
               size="lg"
-              onClick={() => router.push(`https://app.anaya.legal`)}
-              className={`hover:bg-black hover:text-white gap-2 hover:gap-4 text-base mt-0`}
+              onClick={() => router.push("/subscribe")}
+              className={`hover:bg-black bg-primary hover:text-white gap-2 hover:gap-4 text-base mt-0`}
             >
-              <p>⚡ Try Anaya Now</p>
+              <p>Request Demo</p>
               <p>➔</p>
             </Button>
           </div>
@@ -83,12 +84,12 @@ export default function Navbar() {
 
               <div className="mt-auto flex flex-col gap-2 border-t pt-6">
                 <Button
-                  variant="outline"
+                  variant="default"
                   size="lg"
-                  onClick={() => router.push(`https://app.anaya.legal`)}
-                  className={`hover:bg-black hover:text-white gap-2 hover:gap-4 text-base mt-4`}
+                  onClick={() => router.push("/subscribe")}
+                  className={`hover:bg-black bg-primary hover:text-white gap-2 hover:gap-4 text-base mt-0`}
                 >
-                  <p>⚡ Try Anaya Now</p>
+                  <p>Request Demo</p>
                   <p>➔</p>
                 </Button>
               </div>

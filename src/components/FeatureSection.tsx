@@ -19,28 +19,31 @@ export default function FeatureSection({
   reverse = false,
 }: FeatureSectionProps) {
   return (
-    <section id={id} className={`py-12 sm:py-16 dark:bg-black`}>
+    // Adjusted padding
+    <section id={id} className={`py-16 dark:bg-black sm:py-24 ${ reverse ? "bg-gray-100":""}`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className={`grid gap-10 sm:gap-12 md:grid-cols-2 items-center ${
+          // Added lg:gap-24 for more space between columns on large screens
+          className={`grid items-center gap-12 md:grid-cols-2 lg:gap-24 ${
             reverse ? "md:[&>*:first-child]:order-last" : ""
           }`}
         >
-          {/* Text */}
-          <div className="p-4 sm:p-6">
-            <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+          {/* Text Column */}
+          <div className="text-left">
+            <h2 className="font-headline text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
               {title}
             </h2>
-            <p className="mt-6 sm:mt-8 md:mt-6 lg:mt-8 text-base sm:text-lg md:text-md text-gray-700 dark:text-gray-300">
+            <p className="mt-6 text-base text-gray-700 dark:text-gray-300 sm:text-lg">
               {description}
             </p>
-            <ul className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
+            <ul className="mt-8 space-y-4">
               {features.map((feature, index) => (
                 <li
                   key={index}
-                  className="flex items-start border-b border-gray-400/50 dark:border-gray-700 text-gray-700 hover:text-black dark:text-gray-300"
+                  // Added padding-bottom for a subtle visual touch
+                  className="flex items-start border-b border-gray-400/50 pb-2 text-gray-700 hover:text-black dark:border-gray-700 dark:text-gray-300"
                 >
-                  <span className="ml-1 text-sm sm:text-base md:text-lg">
+                  <span className="ml-1 text-sm sm:text-base">
                     {feature}
                   </span>
                 </li>
@@ -48,14 +51,15 @@ export default function FeatureSection({
             </ul>
           </div>
 
-          {/* Image */}
+          {/* Image Column */}
           <div className="flex justify-center">
             <Image
               src={image}
               alt={title}
               width={700}
               height={500}
-              className="w-full max-w-md md:max-w-lg lg:max-w-xl h-auto object-contain"
+              // Ensured the image scales properly and doesn't exceed its container
+              className="h-auto w-full max-w-md object-contain md:max-w-lg lg:max-w-xl"
               priority
             />
           </div>

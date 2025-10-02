@@ -16,8 +16,8 @@ export default function Home() {
         <Demo />
         <Benefits />
         <Features />
-        <Faq />
         <Cta />
+        <Faq />
       </main>
       <Footer />
     </div>
