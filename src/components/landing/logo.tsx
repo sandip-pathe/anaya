@@ -1,9 +1,11 @@
+import Link from "next/link";
+
 export default function Logo() {
   return (
-    <div className="flex items-center">
+    <Link href="/" className="flex items-center hover:opacity-80 transition">
       <span className="font-headline text-5xl font-bold text-primary">
         Anaya
       </span>
-    </div>
+    </Link>
   );
 }

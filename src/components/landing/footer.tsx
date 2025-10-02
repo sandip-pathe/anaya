@@ -26,7 +26,7 @@ export default function Footer() {
             {/* Left: Heading & CTA */}
             <div className="mb-8 md:mb-0">
               <h2 className="font-headline text-3xl sm:text-3xl font-bold tracking-tight">
-                Join the waitlist for early access
+                Request early access for your firm
               </h2>
               <Button
                 variant="outline"
@@ -36,7 +36,7 @@ export default function Footer() {
                 }}
                 className={`hover:bg-black hover:text-white gap-2 hover:gap-4 mt-4 text-base`}
               >
-                <p>⚡ Try Anaya Now</p>
+                <p>⚡Request access</p>
                 <p>➔</p>
               </Button>
             </div>

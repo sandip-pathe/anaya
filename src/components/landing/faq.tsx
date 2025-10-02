@@ -7,7 +7,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { FaWhatsapp } from "react-icons/fa";
-import ContactModal from "../contact";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 const faqs = [
   {
@@ -28,6 +29,7 @@ const faqs = [
 ];
 
 export default function Faq() {
+  const router = useRouter();
   return (
     <section id="faq" className="py-16 sm:py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -64,19 +66,31 @@ export default function Faq() {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="flex items-center justify-start space-x-4 mt-4">
-                  {/* Contact Form Modal */}
-                  <ContactModal />
+                <div className="flex items-center justify-start mr-4 space-x-4 mt-4">
+                  {/* Contact Us Button */}
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => {
+                      router.push("/subscribe");
+                    }}
+                    className="hover:bg-black hover:text-white gap-2 mt-4 text-base flex-1"
+                  >
+                    Contact Us
+                  </Button>
 
                   {/* WhatsApp Button */}
-                  <button
-                    className="flex items-center justify-center w-12 h-12 text-green-500 rounded-full hover:scale-110"
+                  <Button
+                    variant="outline"
+                    size="lg"
                     onClick={() => {
                       window.open("https://wa.me/+918767394523", "_blank");
                     }}
+                    className="hover:bg-green-600 hover:text-white gap-2 mt-4 text-base flex-1 text-green-600"
                   >
-                    <FaWhatsapp size={24} />
-                  </button>
+                    <FaWhatsapp size={20} />
+                    WhatsApp
+                  </Button>
                 </div>
               </AccordionContent>
             </AccordionItem>

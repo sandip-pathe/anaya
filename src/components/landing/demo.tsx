@@ -46,7 +46,7 @@ export default function Demo() {
             {/* Demo Image */}
             <Image
               src="https://raw.githubusercontent.com/sandip-pathe/projects/refs/heads/main/0.png"
-              alt="Anaya Agent Demo"
+              alt="A demonstration of the Anaya AI platform analyzing legal documents."
               width={1366}
               height={694}
               className="h-auto w-full cursor-pointer object-contain"
