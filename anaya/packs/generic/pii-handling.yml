@@ -1,0 +1,71 @@
+pack:
+  id: "generic/pii-handling"
+  version: "1.0.0"
+  name: "PII Handling"
+  description: "Detects common personal-data leaks in logs, responses, and errors."
+  last_updated: "2026-02-21"
+  authors: ["Anaya Team"]
+  sources: []
+
+rules:
+  - id: "ANAYA-PII-001"
+    name: "PII In Logs"
+    description: "Logs must not include raw personal identifiers."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(logger?\.(info|debug|warning|error|critical)|print|console\.(log|error|warn))\s*\([^)]*(aadhaar|aadhar|pan|ssn|passport|card_number|account_number|email|phone|mobile)[^)]*\)'
+        description: "Matches logging calls containing common PII field names."
+        exclude_patterns:
+          - "mask"
+          - "redact"
+          - "hash"
+    message: "PII-like field appears in a log statement at line {line}."
+    fix_hint: "Mask, hash, or omit personal identifiers before logging."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+        title: "OWASP Logging Cheat Sheet"
+    tags: ["pii", "logging"]
+    enabled: true
+
+  - id: "ANAYA-PII-002"
+    name: "PII In API Response"
+    description: "API responses must not expose full personal identifiers."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(return\s+.*|jsonify\s*\(|res\.json\s*\()[^;\n]*(aadhaar|aadhar|pan|ssn|card_number|account_number|cvv)'
+        description: "Matches response-building lines containing sensitive fields."
+        exclude_patterns:
+          - "mask"
+          - "last4"
+          - "redact"
+    message: "PII-like field appears in an API response at line {line}."
+    fix_hint: "Return masked values or opaque identifiers instead of full PII."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html"
+        title: "OWASP REST Security Cheat Sheet"
+    tags: ["pii", "api"]
+    enabled: true
+
+  - id: "ANAYA-PII-003"
+    name: "PII In Error Message"
+    description: "Error messages must not expose personal identifiers."
+    type: pattern
+    severity: MEDIUM
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(raise|throw|Error|Exception|logger?\.error)[^;\n]*(aadhaar|aadhar|pan|ssn|account_number|card_number)'
+        description: "Matches error paths that include PII field names."
+        exclude_patterns:
+          - "mask"
+          - "redact"
+    message: "PII-like field appears in an error path at line {line}."
+    fix_hint: "Use stable IDs and redact personal data from errors."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html"
+        title: "OWASP Error Handling Cheat Sheet"
+    tags: ["pii", "errors"]
+    enabled: true

@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.env
+.venv/
+env/
+venv/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+
+# Local secrets and generated output
+*.pem
+*.key
+*.p8
+secrets/
+outputs/
+*.sarif
+
+# OS
+.DS_Store
+Thumbs.db

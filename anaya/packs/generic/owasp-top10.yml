@@ -1,0 +1,82 @@
+pack:
+  id: "generic/owasp-top10"
+  version: "1.0.0"
+  name: "OWASP Top 10"
+  description: "Deterministic checks for common application security risks."
+  last_updated: "2026-02-21"
+  authors: ["Anaya Team"]
+  sources:
+    - url: "https://owasp.org/www-project-top-ten/"
+      title: "OWASP Top 10"
+
+rules:
+  - id: "ANAYA-OWASP-001"
+    name: "SQL Injection Risk"
+    description: "SQL queries must not be built by concatenating or interpolating user input."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(SELECT|INSERT|UPDATE|DELETE)\s+.*(\+|f["'']|format\(|%s|`\$\{)'
+        description: "Matches SQL statements with interpolation or string concatenation."
+    message: "Possible SQL injection risk at line {line}."
+    fix_hint: "Use parameterized queries or your ORM's safe query builder."
+    references:
+      - url: "https://owasp.org/Top10/A03_2021-Injection/"
+        title: "OWASP A03: Injection"
+    tags: ["owasp", "injection", "sql"]
+    enabled: true
+
+  - id: "ANAYA-OWASP-002"
+    name: "Command Injection Risk"
+    description: "Shell commands must not execute user-controlled strings."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(os\.system|subprocess\.(call|run|Popen)\([^)]*shell\s*=\s*True|child_process\.exec)\s*\('
+        description: "Matches shell execution APIs that commonly enable injection."
+    message: "Command execution pattern needs review at line {line}."
+    fix_hint: "Use argument arrays, disable shell execution, and validate inputs."
+    references:
+      - url: "https://owasp.org/Top10/A03_2021-Injection/"
+        title: "OWASP A03: Injection"
+    tags: ["owasp", "injection", "commands"]
+    enabled: true
+
+  - id: "ANAYA-OWASP-003"
+    name: "Unsafe Eval"
+    description: "Dynamic code execution must not be used with untrusted input."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '\b(eval|exec)\s*\('
+        description: "Matches direct eval or exec calls."
+    message: "Unsafe dynamic code execution at line {line}."
+    fix_hint: "Replace eval/exec with structured parsing or explicit dispatch."
+    references:
+      - url: "https://owasp.org/Top10/A03_2021-Injection/"
+        title: "OWASP A03: Injection"
+    tags: ["owasp", "injection"]
+    enabled: true
+
+  - id: "ANAYA-OWASP-004"
+    name: "Insecure Deserialization"
+    description: "Unsafe deserialization can execute attacker-controlled payloads."
+    type: pattern
+    severity: HIGH
+    languages: [python]
+    patterns:
+      - regex: '\b(pickle\.loads|pickle\.load|yaml\.load)\s*\('
+        description: "Matches unsafe Python deserialization APIs."
+        exclude_patterns:
+          - "SafeLoader"
+          - "safe_load"
+    message: "Unsafe deserialization pattern at line {line}."
+    fix_hint: "Use safe parsers such as yaml.safe_load and avoid pickle for untrusted data."
+    references:
+      - url: "https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/"
+        title: "OWASP A08: Software and Data Integrity Failures"
+    tags: ["owasp", "deserialization"]
+    enabled: true

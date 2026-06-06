@@ -1,0 +1,60 @@
+pack:
+  id: "generic/tls-encryption"
+  version: "1.0.0"
+  name: "TLS And Encryption"
+  description: "Detects disabled transport security and insecure network use."
+  last_updated: "2026-02-21"
+  authors: ["Anaya Team"]
+  sources: []
+
+rules:
+  - id: "ANAYA-TLS-001"
+    name: "TLS Verification Disabled"
+    description: "HTTP clients must not disable TLS certificate verification."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(verify\s*=\s*False|rejectUnauthorized\s*:\s*false)'
+        description: "Matches disabled TLS verification options."
+    message: "TLS certificate verification is disabled at line {line}."
+    fix_hint: "Keep certificate verification enabled and configure trusted CAs correctly."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html"
+        title: "OWASP TLS Cheat Sheet"
+    tags: ["tls", "transport"]
+    enabled: true
+
+  - id: "ANAYA-TLS-002"
+    name: "Insecure HTTP URL"
+    description: "Production API calls should use HTTPS, not HTTP."
+    type: pattern
+    severity: MEDIUM
+    languages: [python, javascript, typescript, java, go, ruby, rust]
+    patterns:
+      - regex: '["'']http://(?!localhost|127\.0\.0\.1)[^"'']+["'']'
+        description: "Matches non-local plain HTTP URLs."
+    message: "Plain HTTP URL detected at line {line}."
+    fix_hint: "Use HTTPS for network calls carrying application data."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html"
+        title: "OWASP TLS Cheat Sheet"
+    tags: ["tls", "http"]
+    enabled: true
+
+  - id: "ANAYA-TLS-003"
+    name: "Database SSL Disabled"
+    description: "Database connections should not explicitly disable SSL."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(ssl\s*=\s*False|sslmode\s*=\s*["'']disable["'']|ssl\s*:\s*false)'
+        description: "Matches database SSL disablement."
+    message: "Database SSL appears disabled at line {line}."
+    fix_hint: "Enable database TLS and validate server certificates."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html"
+        title: "OWASP TLS Cheat Sheet"
+    tags: ["tls", "database"]
+    enabled: true

@@ -1,0 +1,22 @@
+version: "1"
+
+packs:
+  - id: generic/secrets-detection
+  - id: generic/owasp-top10
+  - id: generic/pii-handling
+  - id: generic/tls-encryption
+
+scan:
+  mode: diff
+  languages: []
+
+thresholds:
+  fail_on: CRITICAL
+  warn_on: HIGH
+
+ignore:
+  paths:
+    - "tests/**"
+    - "node_modules/**"
+    - "vendor/**"
+  rules: []
