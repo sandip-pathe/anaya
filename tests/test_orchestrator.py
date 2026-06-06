@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from anaya.engine.orchestrator import ScanOrchestrator
+from anaya.engine.repo_config import DEFAULT_PACKS
 from anaya.engine.rule_loader import load_rule_pack
 
 
@@ -66,3 +67,18 @@ def test_scan_languages_filters_rule_set(tmp_path: Path):
     assert summary.total_files == 1
     assert summary.rules_checked == 0
     assert summary.total_violations == 0
+
+
+def test_pack_status_tracks_warns_even_after_overall_fail():
+    packs = [
+        load_rule_pack(Path("anaya/packs").joinpath(*pack_id.split("/")).with_suffix(".yml"))
+        for pack_id in DEFAULT_PACKS
+    ]
+    summary = ScanOrchestrator(packs).scan_paths(
+        [Path("tests/fixtures/python/dirty/security_matrix.py")]
+    )
+
+    assert summary.overall_status == "FAIL"
+    assert summary.by_pack["generic/secrets-detection"]["status"] == "FAIL"
+    assert summary.by_pack["generic/owasp-top10"]["status"] == "WARN"
+    assert summary.by_pack["generic/audit-logging"]["status"] == "WARN"

@@ -87,6 +87,8 @@ def _has_inline_suppression(line: str, rule_id: str) -> bool:
         or f"noqa:{rule_id.lower()}" in lowered
         or "noqa: anaya" in lowered
         or "noqa:anaya" in lowered
+        or f"anaya: ignore {rule_id.lower()}" in lowered
+        or "anaya: ignore" in lowered
     )
 
 

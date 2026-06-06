@@ -17,7 +17,7 @@ rules:
     severity: HIGH
     languages: [python, javascript, typescript]
     patterns:
-      - regex: '(SELECT|INSERT|UPDATE|DELETE)\s+.*(\+|f["'']|format\(|%s|`\$\{)'
+      - regex: '(SELECT|INSERT|UPDATE|DELETE)\s+.*(\+|f["'']|format\(|\$\{)'
         description: "Matches SQL statements with interpolation or string concatenation."
     message: "Possible SQL injection risk at line {line}."
     fix_hint: "Use parameterized queries or your ORM's safe query builder."
@@ -79,4 +79,80 @@ rules:
       - url: "https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/"
         title: "OWASP A08: Software and Data Integrity Failures"
     tags: ["owasp", "deserialization"]
+    enabled: true
+
+  - id: "ANAYA-OWASP-005"
+    name: "Path Traversal Risk"
+    description: "File paths derived from request input must be normalized and constrained."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(open|send_file|FileResponse|fs\.readFile|readFileSync)\s*\([^;\n]*(\.\./|\+|request\.|req\.|params|query)'
+        description: "Matches file reads that combine path traversal markers or request input."
+        exclude_patterns:
+          - "safe_join"
+          - "secure_filename"
+          - "resolve_safe_path"
+    message: "Path traversal risk in file access at line {line}."
+    fix_hint: "Resolve paths against an allowlisted base directory and reject traversal segments."
+    references:
+      - url: "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+        title: "OWASP A01: Broken Access Control"
+    tags: ["owasp", "path-traversal", "access-control"]
+    enabled: true
+
+  - id: "ANAYA-OWASP-006"
+    name: "Weak Cryptographic Hash"
+    description: "MD5 and SHA1 should not be used for security-sensitive hashing."
+    type: pattern
+    severity: MEDIUM
+    languages: [python, javascript, typescript, java]
+    patterns:
+      - regex: '\b(hashlib\.(md5|sha1)|crypto\.createHash\(["''](md5|sha1)["'']|MessageDigest\.getInstance\(["''](MD5|SHA-1)["''])'
+        description: "Matches weak hash primitives."
+    message: "Weak cryptographic hash detected at line {line}."
+    fix_hint: "Use SHA-256 or stronger, and use password hashing functions for passwords."
+    references:
+      - url: "https://owasp.org/Top10/A02_2021-Cryptographic_Failures/"
+        title: "OWASP A02: Cryptographic Failures"
+    tags: ["owasp", "crypto"]
+    enabled: true
+
+  - id: "ANAYA-OWASP-007"
+    name: "Server-Side Request Forgery Risk"
+    description: "Outbound requests must not use untrusted URLs without allowlisting."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(requests\.(get|post|put)|httpx\.(get|post|put)|axios\.(get|post|put)|fetch)\s*\([^;\n]*(request\.|req\.|params|query)'
+        description: "Matches outbound HTTP calls that appear to use request-controlled URLs."
+        exclude_patterns:
+          - "allowlist"
+          - "allowed_hosts"
+          - "validate_url"
+    message: "Possible SSRF risk in outbound request at line {line}."
+    fix_hint: "Allowlist destination hosts and block private network ranges before making requests."
+    references:
+      - url: "https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/"
+        title: "OWASP A10: Server-Side Request Forgery"
+    tags: ["owasp", "ssrf"]
+    enabled: true
+
+  - id: "ANAYA-OWASP-008"
+    name: "CSRF Protection Disabled"
+    description: "State-changing web endpoints should not disable CSRF protection."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(csrf(_protect(ion)?)?(_enabled)?\s*[:=]\s*False|WTF_CSRF_ENABLED["'']?\s*[:=]\s*False|csrf\s*:\s*false)'
+        description: "Matches disabled CSRF protection settings."
+    message: "CSRF protection appears disabled at line {line}."
+    fix_hint: "Keep CSRF protection enabled or document a compensating signed-token control."
+    references:
+      - url: "https://owasp.org/www-community/attacks/csrf"
+        title: "OWASP Cross-Site Request Forgery"
+    tags: ["owasp", "csrf"]
     enabled: true

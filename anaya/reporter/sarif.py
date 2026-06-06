@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from anaya.engine.models import ScanSummary
 
@@ -23,18 +24,22 @@ def format_sarif(summary: ScanSummary) -> str:
     results = []
     for scan_result in summary.results:
         for violation in scan_result.violations:
+            first_reference = violation.references[0] if violation.references else {}
+            rule_metadata = {
+                "id": violation.rule_id,
+                "name": violation.rule_name,
+                "shortDescription": {"text": violation.rule_name},
+                "fullDescription": {"text": violation.message},
+                "defaultConfiguration": {
+                    "level": SEVERITY_TO_SARIF_LEVEL.get(violation.severity, "warning")
+                },
+                "help": {"text": violation.fix_hint},
+            }
+            if first_reference.get("url"):
+                rule_metadata["helpUri"] = first_reference["url"]
             rules_by_id.setdefault(
                 violation.rule_id,
-                {
-                    "id": violation.rule_id,
-                    "name": violation.rule_name,
-                    "shortDescription": {"text": violation.rule_name},
-                    "fullDescription": {"text": violation.message},
-                    "defaultConfiguration": {
-                        "level": SEVERITY_TO_SARIF_LEVEL.get(violation.severity, "warning")
-                    },
-                    "help": {"text": violation.fix_hint},
-                },
+                rule_metadata,
             )
             results.append(
                 {
@@ -44,7 +49,7 @@ def format_sarif(summary: ScanSummary) -> str:
                     "locations": [
                         {
                             "physicalLocation": {
-                                "artifactLocation": {"uri": violation.file_path},
+                                "artifactLocation": {"uri": Path(violation.file_path).as_posix()},
                                 "region": {
                                     "startLine": violation.line_number,
                                     "startColumn": violation.column or 1,

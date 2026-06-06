@@ -18,6 +18,7 @@ DEFAULT_PACKS = (
     "generic/owasp-top10",
     "generic/pii-handling",
     "generic/tls-encryption",
+    "generic/audit-logging",
 )
 
 

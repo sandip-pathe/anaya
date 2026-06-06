@@ -89,15 +89,18 @@ Already implemented:
   - `generic/owasp-top10`
   - `generic/pii-handling`
   - `generic/tls-encryption`
-- Basic dirty/clean Python fixtures
+- `generic/audit-logging`
+- 26 deterministic built-in rules
+- Python and JavaScript dirty/clean fixture matrix
+- `anaya test-rule --rule RULE_ID --file FILE`
 - Tests passing and Ruff clean
 
 Known gaps:
 
 - No AST scanner yet
-- No audit-logging pack yet
-- SARIF is minimal and needs schema-quality validation
-- Table output is plain text, not Rich-polished
+- Audit logging pack is pattern-based; structural missing-audit detection waits for AST scanner
+- SARIF has contract tests but still needs full schema validation
+- Table output is plain text with metadata, not Rich-polished
 - Diff-file scanning exists; changed-line-aware annotations are still future work
 - No GitHub App in the new app
 - No FastAPI, Celery, Redis, or Docker yet
@@ -105,9 +108,6 @@ Known gaps:
 - No GitHub Code Scanning SARIF upload
 - No LLM fallback module
 - No OpenAI integration module yet
-- No JavaScript fixtures yet
-- No CI workflow yet
-- README still says "one initial generic rule pack" and should be updated to reflect four packs
 
 ## 4. Target Architecture
 
@@ -270,22 +270,30 @@ Goal: complete V1 generic packs with 20+ tested rules.
 Current pack status:
 
 - Secrets: 6 rules
-- OWASP: 4 rules
-- PII: 3 rules
-- TLS: 3 rules
-- Audit logging: missing
-- Total: 16 rules
+- OWASP: 8 rules
+- PII: 5 rules
+- TLS: 4 rules
+- Audit logging: 3 pattern rules
+- Total: 26 rules
+
+Combined M3/M4 pass status:
+
+- Built-in packs load as 5 generic OSS packs.
+- Dirty Python and JavaScript matrix fixtures assert exact expected rule IDs.
+- Clean Python and JavaScript fixtures pass.
+- Suppression edge fixture passes.
+- Remaining later upgrade: replace audit logging heuristics with AST-based missing-audit detection in M6.
 
 Tasks:
 
 - Complete `generic/owasp-top10.yml` to 8 rules:
   - SQL injection
   - command injection
+  - unsafe eval
   - path traversal
   - weak crypto
   - insecure deserialization
   - SSRF pattern
-  - XSS pattern
   - disabled CSRF protection
 - Complete `generic/pii-handling.yml` to 5 rules:
   - PII in logs
@@ -298,10 +306,10 @@ Tasks:
   - insecure HTTP URL
   - weak TLS versions
   - database SSL disabled/missing
-- Add `generic/audit-logging.yml` with 3 AST rules:
-  - financial transaction functions without audit log
-  - authentication functions without login-attempt logging
-  - data deletion functions without deletion audit trail
+- Add `generic/audit-logging.yml` with 3 deterministic pattern rules now:
+  - audit logging disabled
+  - transaction audit bypass
+  - authentication audit bypass
 - Add Python fixtures:
   - dirty and clean per rule
   - edge cases per rule
@@ -309,7 +317,7 @@ Tasks:
 - Add JavaScript/TypeScript fixtures:
   - dirty and clean per supported JS rule
   - suppressions
-- Add golden expected-results files for fixture directories.
+- Add golden expected rule IDs for fixture directories.
 - Run false-positive sanity checks on known clean codebases.
 
 Acceptance:
@@ -321,11 +329,20 @@ Acceptance:
   - one clean fixture
   - one edge case
 - Fixture tests assert exact expected rule IDs.
-- False-positive report exists.
+- False-positive report exists or is tracked through a manual noise-review checklist.
 
 ### M4. CLI Productization
 
 Goal: make `anaya scan` good enough for real developer use.
+
+Combined M3/M4 pass status:
+
+- `scan`, `init`, `validate-pack`, `test-rule`, and `packs list` exist.
+- Output files create parent directories.
+- Table output includes status, counts, pack versions, skipped files, fix hints, and no-finding state.
+- JSON and SARIF reporter contracts are tested.
+- Exit-code behavior is tested for pass, fail-threshold findings, and invalid config.
+- Remaining later polish: Rich visual formatting, overwrite policy, GitHub Action example docs, and full SARIF schema validation.
 
 Tasks:
 
@@ -359,7 +376,7 @@ Tasks:
 
 Acceptance:
 
-- New user can install and scan a sample project in under 5 minutes.
+- New user can install and scan a sample project.
 - CLI output is stable and tested.
 - JSON output is useful in CI.
 - SARIF output validates.
@@ -743,27 +760,25 @@ Recommendation:
 
 Next 10 concrete tasks:
 
-1. Update `README.md` to reflect four current packs and current CLI behavior.
-2. Add `LICENSE`, `CHANGELOG.md`, and `CONTRIBUTING.md`.
-3. Add CI workflow for tests/lint/package install.
-4. Add coverage tooling and coverage target.
-5. Complete missing generic rules to reach 20+ total.
-6. Add JavaScript dirty/clean fixtures.
-7. Add SARIF schema validation test.
-8. Add Rich table output.
-9. Add `--diff REF` support.
-10. Add AST scanner and `generic/audit-logging.yml`.
+1. Add full SARIF 2.1.0 schema validation.
+2. Add GitHub Action example docs.
+3. Add Rich table rendering while preserving `--no-color`.
+4. Decide output overwrite policy.
+5. Add AST scanner.
+6. Upgrade audit logging pack from bypass patterns to missing-audit structural rules.
+7. Add TypeScript fixture matrix.
+8. Run false-positive review on `fintech-demo` and capture findings.
+9. Add FastAPI app and health endpoint.
+10. Port webhook signature verification.
 
 After that:
 
-11. Add FastAPI app and health endpoint.
-12. Port webhook signature verification.
-13. Port GitHub App JWT/token logic with `httpx`.
-14. Implement Check Runs API.
-15. Implement Celery worker and Redis token cache.
-16. End-to-end GitHub App test on a demo repo.
-17. Add optional OpenAI judge.
-18. Prepare deployment/demo docs.
+11. Port GitHub App JWT/token logic with `httpx`.
+12. Implement Check Runs API.
+13. Implement Celery worker and Redis token cache.
+14. End-to-end GitHub App test on a demo repo.
+15. Add optional OpenAI judge.
+16. Prepare deployment/demo docs.
 
 ## 13. V1 Definition Of Done
 

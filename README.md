@@ -13,7 +13,8 @@ This folder is the clean Anaya foundation. The older `rbi-compliance-scanner` fo
 - Load built-in or user-authored external policy packs
 - Run deterministic pattern rules against source files
 - Emit table, JSON, or SARIF-style output from the CLI
-- Ship initial generic OSS packs for secrets, OWASP, PII handling, and TLS
+- Ship five generic OSS packs for secrets, OWASP, PII handling, TLS, and audit logging
+- Cover 26 built-in rules with Python and JavaScript fixture tests
 
 ## Quick Start
 
@@ -34,6 +35,8 @@ python -m anaya.cli.main scan . --no-config --format json
 ```bash
 anaya scan PATH
 anaya scan PATH --diff HEAD~1
+anaya scan PATH --format sarif -o anaya.sarif
+anaya test-rule --rule ANAYA-SEC-001 --file app.py
 anaya init
 anaya validate-pack anaya\packs\generic\secrets-detection.yml
 anaya packs list
@@ -73,7 +76,7 @@ Configured packs, thresholds, languages, and ignored rule IDs are validated befo
 
 ## Status
 
-This is the Phase 1/Phase 3 skeleton from `ANAYA_SPEC.py`: engine models, rule loader, pattern scanner, repository config, reporters, initial generic packs, and OSS CLI. GitHub App, Check Runs, async workers, AST scanning, and OpenAI-based optional LLM fallback are intentionally not wired yet.
+This is the Phase 1/Phase 3/Phase 4 foundation from `ANAYA_SPEC.py`: engine models, rule loader, pattern scanner, repository config, reporters, tested generic packs, and OSS CLI. GitHub App, Check Runs, async workers, AST scanning, and OpenAI-based optional LLM fallback are intentionally not wired yet.
 
 ## Development
 
@@ -85,3 +88,5 @@ python -m ruff check .
 ```
 
 The same commands are wrapped in the repository `Makefile` for contributors who have `make` installed.
+
+For human product checks after automated tests pass, see `docs/MANUAL_CHECKS.md`.

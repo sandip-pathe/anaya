@@ -69,3 +69,51 @@ rules:
         title: "OWASP Error Handling Cheat Sheet"
     tags: ["pii", "errors"]
     enabled: true
+
+  - id: "ANAYA-PII-004"
+    name: "PII In Comments"
+    description: "Comments and docstrings must not contain real personal identifiers."
+    type: pattern
+    severity: MEDIUM
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(#|//|/\*|\*)[^;\n]*(aadhaar|aadhar|pan|ssn|passport|card_number|account_number|email|phone|mobile)\s*[:=]?\s*[A-Za-z0-9@._-]{4,}'
+        description: "Matches comment lines containing common PII labels and values."
+        exclude_patterns:
+          - "example"
+          - "masked"
+          - "redacted"
+    message: "PII-like value appears in a comment at line {line}."
+    fix_hint: "Remove real identifiers from comments and use synthetic examples."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+        title: "OWASP Logging Cheat Sheet"
+    tags: ["pii", "comments"]
+    enabled: true
+
+  - id: "ANAYA-PII-005"
+    name: "Unmasked PII String Formatting"
+    description: "Formatted strings must not interpolate raw personal identifiers."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: 'f["''][^"'']*(aadhaar|aadhar|pan|ssn|passport|card_number|account_number|email|phone|mobile)[^"'']*\{'
+        description: "Matches Python f-strings that interpolate PII-like fields."
+        exclude_patterns:
+          - "mask"
+          - "redact"
+          - "last4"
+      - regex: '`[^`]*(aadhaar|aadhar|pan|ssn|passport|card_number|account_number|email|phone|mobile)[^`]*\$\{'
+        description: "Matches JavaScript template strings that interpolate PII-like fields."
+        exclude_patterns:
+          - "mask"
+          - "redact"
+          - "last4"
+    message: "Raw PII-like value appears in string formatting at line {line}."
+    fix_hint: "Format masked, hashed, or tokenized values instead of raw identifiers."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/User_Privacy_Protection_Cheat_Sheet.html"
+        title: "OWASP User Privacy Protection Cheat Sheet"
+    tags: ["pii", "formatting"]
+    enabled: true

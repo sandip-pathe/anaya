@@ -5,6 +5,7 @@ packs:
   - id: generic/owasp-top10
   - id: generic/pii-handling
   - id: generic/tls-encryption
+  - id: generic/audit-logging
 
 scan:
   mode: diff

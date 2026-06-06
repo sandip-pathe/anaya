@@ -14,12 +14,25 @@ def format_table(summary: ScanSummary) -> str:
         f"Files scanned: {summary.total_files}",
         f"Rules checked: {summary.rules_checked}",
         f"Duration: {summary.scan_duration_ms:.1f} ms",
-        "",
-        "Severity: "
-        + ", ".join(f"{name}={count}" for name, count in summary.by_severity.items() if count),
     ]
+    if summary.config_path:
+        lines.append(f"Config: {summary.config_path}")
     if summary.skipped_files:
         lines.append("Skipped: " + ", ".join(f"{key}={value}" for key, value in summary.skipped_files.items()))
+    if summary.pack_versions:
+        lines.append(
+            "Pack versions: "
+            + ", ".join(
+                f"{pack_id}@{version}" for pack_id, version in sorted(summary.pack_versions.items())
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "Severity: "
+            + ", ".join(f"{name}={count}" for name, count in summary.by_severity.items() if count),
+        ]
+    )
 
     if summary.by_pack:
         lines.extend(["", "Packs:"])
@@ -27,8 +40,9 @@ def format_table(summary: ScanSummary) -> str:
             lines.append(f"  {pack_id}: {stats['status']} ({stats['total']} finding(s))")
 
     violations = [violation for result in summary.results for violation in result.violations]
-    if violations:
-        lines.extend(["", "Findings:"])
+    lines.extend(["", "Findings:"])
+    if not violations:
+        lines.append("  No findings.")
     for violation in violations:
         lines.extend(
             [

@@ -14,8 +14,14 @@ from anaya.engine.orchestrator import (
     built_in_pack_paths,
     resolve_pack_identifier,
 )
-from anaya.engine.repo_config import find_config, load_repository_config
-from anaya.engine.rule_loader import load_rule_pack, validate_rule_pack
+from anaya.engine.repo_config import (
+    DEFAULT_PACKS,
+    RepositoryConfig,
+    RepositoryConfigError,
+    find_config,
+    load_repository_config,
+)
+from anaya.engine.rule_loader import RulePackError, load_rule_pack, validate_rule_pack
 from anaya.reporter.json_report import format_json
 from anaya.reporter.sarif import format_sarif
 from anaya.reporter.table import format_table
@@ -51,15 +57,11 @@ def scan(
     diff: Optional[str] = typer.Option(None, "--diff", help="Scan files changed since REF."),
     fail_on: Optional[str] = typer.Option(None, "--fail-on", help="Minimum severity that fails."),
     warn_on: Optional[str] = typer.Option(None, "--warn-on", help="Minimum severity that warns."),
+    no_color: bool = typer.Option(False, "--no-color", help="Disable color output."),
 ) -> None:
     """Scan a path with deterministic rule packs."""
 
-    config_path = None if no_config else (config if config is not None else find_config(path))
-    repo_config = load_repository_config(config_path)
-    pack_ids = tuple(pack) if pack else repo_config.packs
-    pack_base_dir = config_path.parent if config_path else None
-    pack_paths = [resolve_pack_identifier(item, base_dir=pack_base_dir) for item in pack_ids]
-    orchestrator = ScanOrchestrator.from_pack_paths(pack_paths)
+    config_path, repo_config, orchestrator = _load_scan_context(path, pack, config, no_config)
     scan_paths = [path]
     if diff:
         diff_cwd = path if path.is_dir() else path.parent
@@ -82,11 +84,57 @@ def scan(
     )
 
     rendered = _render(summary, output_format)
-    if output:
-        output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(rendered + "\n", encoding="utf-8")
-    else:
-        typer.echo(rendered)
+    _write_or_echo(rendered, output)
+
+    raise typer.Exit(code=1 if summary.overall_status == "FAIL" else 0)
+
+
+@app.command("test-rule")
+def test_rule(
+    rule_id: str = typer.Option(..., "--rule", help="Rule ID to run in isolation."),
+    file: Path = typer.Option(..., "--file", help="Source file to scan with the selected rule."),
+    pack: Optional[list[str]] = typer.Option(
+        None,
+        "--pack",
+        "-p",
+        help="Rule pack path or built-in id, e.g. generic/secrets-detection.",
+    ),
+    config: Optional[Path] = typer.Option(
+        None,
+        "--config",
+        "-c",
+        help="Path to anaya.yml. Auto-discovered when omitted.",
+    ),
+    no_config: bool = typer.Option(False, "--no-config", help="Ignore anaya.yml discovery."),
+    output_format: str = typer.Option(
+        "table",
+        "--format",
+        "-f",
+        help="Output format: table, json, or sarif.",
+    ),
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Write output to a file."),
+    fail_on: Optional[str] = typer.Option(None, "--fail-on", help="Minimum severity that fails."),
+    warn_on: Optional[str] = typer.Option(None, "--warn-on", help="Minimum severity that warns."),
+    no_color: bool = typer.Option(False, "--no-color", help="Disable color output."),
+) -> None:
+    """Run one rule against one file for pack authoring and debugging."""
+
+    config_path, repo_config, orchestrator = _load_scan_context(file, pack, config, no_config)
+    if not any(rule.id == rule_id for rule in orchestrator.rules):
+        raise typer.BadParameter(f"Unknown rule: {rule_id}")
+
+    ignored_rules = tuple(rule.id for rule in orchestrator.rules if rule.id != rule_id)
+    summary = orchestrator.scan_paths(
+        [file],
+        fail_on=(fail_on or repo_config.thresholds.fail_on),
+        warn_on=(warn_on or repo_config.thresholds.warn_on),
+        ignore=DEFAULT_IGNORES + repo_config.ignore.paths,
+        ignored_rules=ignored_rules,
+        languages=repo_config.languages,
+        config_path=str(config_path) if config_path else None,
+    )
+    rendered = _render(summary, output_format)
+    _write_or_echo(rendered, output)
 
     raise typer.Exit(code=1 if summary.overall_status == "FAIL" else 0)
 
@@ -103,7 +151,7 @@ def init_config(path: Path = typer.Option(Path("anaya.yml"), "--path", help="Con
                 'version: "1"',
                 "",
                 "packs:",
-                "  - id: generic/secrets-detection",
+                *[f"  - id: {pack_id}" for pack_id in DEFAULT_PACKS],
                 "",
                 "scan:",
                 "  mode: diff",
@@ -145,6 +193,32 @@ def list_packs() -> None:
     for path in built_in_pack_paths():
         pack = load_rule_pack(path)
         typer.echo(f"{pack.id} {pack.version} - {len(pack.rules)} rule(s)")
+
+
+def _load_scan_context(
+    path: Path,
+    pack: Optional[list[str]],
+    config: Optional[Path],
+    no_config: bool,
+) -> tuple[Path | None, RepositoryConfig, ScanOrchestrator]:
+    config_path = None if no_config else (config if config is not None else find_config(path))
+    try:
+        repo_config = load_repository_config(config_path)
+        pack_ids = tuple(pack) if pack else repo_config.packs
+        pack_base_dir = None if pack else (config_path.parent if config_path else None)
+        pack_paths = [resolve_pack_identifier(item, base_dir=pack_base_dir) for item in pack_ids]
+        orchestrator = ScanOrchestrator.from_pack_paths(pack_paths)
+    except (FileNotFoundError, RepositoryConfigError, RulePackError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    return config_path, repo_config, orchestrator
+
+
+def _write_or_echo(rendered: str, output: Path | None) -> None:
+    if output:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(rendered + "\n", encoding="utf-8")
+    else:
+        typer.echo(rendered)
 
 
 def _render(summary, output_format: str) -> str:

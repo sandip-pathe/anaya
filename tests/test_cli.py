@@ -72,10 +72,12 @@ def test_init_validate_and_list_commands(tmp_path: Path):
 
     assert init_result.exit_code == 0
     assert config_path.exists()
+    assert "generic/audit-logging" in config_path.read_text(encoding="utf-8")
     assert validate_result.exit_code == 0
     assert "is valid" in validate_result.output
     assert list_result.exit_code == 0
     assert "generic/secrets-detection" in list_result.output
+    assert "generic/audit-logging" in list_result.output
 
 
 def test_scan_rejects_unknown_format():
@@ -94,6 +96,44 @@ def test_scan_rejects_unknown_format():
 
     assert result.exit_code != 0
     assert "format must be one of" in result.output
+
+
+def test_scan_pass_exit_code_and_no_findings_output():
+    runner = CliRunner()
+
+    result = runner.invoke(
+        app,
+        [
+            "scan",
+            "tests/fixtures/python/clean/security_matrix.py",
+            "--no-config",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "No findings." in result.output
+
+
+def test_scan_invalid_config_exits_with_usage_error(tmp_path: Path):
+    runner = CliRunner()
+    config_path = tmp_path / "anaya.yml"
+    config_path.write_text(
+        "packs:\n  - generic/secrets-detection\nthresholds:\n  fail_on: EXTREME\n",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "scan",
+            "tests/fixtures/python/clean/security_matrix.py",
+            "--config",
+            str(config_path),
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "thresholds.fail_on" in result.output
 
 
 def test_scan_diff_uses_changed_files(tmp_path: Path):
@@ -167,3 +207,45 @@ def test_scan_config_resolves_custom_pack_relative_to_config(tmp_path: Path):
 
     assert result.exit_code == 1
     assert "CUSTOM-001" in result.output
+
+
+def test_test_rule_runs_one_rule():
+    runner = CliRunner()
+
+    result = runner.invoke(
+        app,
+        [
+            "test-rule",
+            "--rule",
+            "ANAYA-SEC-001",
+            "--file",
+            "tests/fixtures/python/dirty/security_matrix.py",
+            "--no-config",
+            "--format",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert '"total_violations": 1' in result.output
+    assert '"rule_id": "ANAYA-SEC-001"' in result.output
+    assert '"rule_id": "ANAYA-SEC-002"' not in result.output
+
+
+def test_test_rule_rejects_unknown_rule():
+    runner = CliRunner()
+
+    result = runner.invoke(
+        app,
+        [
+            "test-rule",
+            "--rule",
+            "ANAYA-DOES-NOT-EXIST",
+            "--file",
+            "tests/fixtures/python/dirty/security_matrix.py",
+            "--no-config",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "Unknown rule" in result.output

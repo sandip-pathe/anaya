@@ -9,6 +9,7 @@ user-authored packs.
 ```bash
 anaya scan . --pack path\to\my-policy-pack.yml
 anaya validate-pack path\to\my-policy-pack.yml
+anaya test-rule --rule ACME-PAY-001 --file tests\fixtures\dirty.py --pack path\to\my-policy-pack.yml
 ```
 
 `anaya.yml` can also reference custom pack paths:
@@ -74,3 +75,14 @@ Planned:
 - Every rule should have dirty, clean, and edge-case fixtures.
 - Rule IDs must be globally unique within a pack ecosystem.
 - Pack authors should include practical `fix_hint` values; developers need a next step, not just a violation.
+
+## Testing A Rule
+
+Use `test-rule` while authoring a pack. It runs one rule against one file using
+the same engine path as `scan`, which makes it useful for debugging regexes,
+suppression behavior, and expected snippets.
+
+```bash
+anaya test-rule --rule ACME-PAY-001 --file tests\fixtures\dirty.py --pack policies\payments.yml
+anaya test-rule --rule ACME-PAY-001 --file tests\fixtures\clean.py --pack policies\payments.yml
+```

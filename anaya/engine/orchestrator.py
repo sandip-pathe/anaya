@@ -226,8 +226,9 @@ def _summarize(
         if severity_at_least(violation.severity, fail_on):
             status = "FAIL"
             pack_stats["status"] = "FAIL"
-        elif status != "FAIL" and severity_at_least(violation.severity, warn_on):
-            status = "WARN"
+        elif severity_at_least(violation.severity, warn_on):
+            if status != "FAIL":
+                status = "WARN"
             if pack_stats["status"] != "FAIL":
                 pack_stats["status"] = "WARN"
 

@@ -1,0 +1,62 @@
+pack:
+  id: "generic/audit-logging"
+  version: "1.0.0"
+  name: "Audit Logging"
+  description: "Detects explicit audit logging bypasses and disabled audit trails."
+  last_updated: "2026-06-06"
+  authors: ["Anaya Team"]
+  sources:
+    - url: "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+      title: "OWASP Logging Cheat Sheet"
+
+rules:
+  - id: "ANAYA-AUDIT-001"
+    name: "Audit Logging Disabled"
+    description: "Audit logging must not be disabled in application code."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(audit(_log|ing)?(_enabled)?\s*[:=]\s*(False|false)|skip_audit\s*[:=]\s*(True|true)|disable_audit)'
+        description: "Matches explicit audit logging disablement or skip flags."
+    message: "Audit logging appears disabled at line {line}."
+    fix_hint: "Keep audit logging enabled and gate exceptional cases through reviewed configuration."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+        title: "OWASP Logging Cheat Sheet"
+    tags: ["audit", "logging"]
+    enabled: true
+
+  - id: "ANAYA-AUDIT-002"
+    name: "Transaction Audit Bypass"
+    description: "Financial transaction flows must not bypass audit logging."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(transfer|debit|credit|refund|payout|disburse)[A-Za-z0-9_]*\([^;\n]*(skip_audit\s*[:=]\s*(True|true)|audit\s*[:=]\s*(False|false))'
+        description: "Matches transaction-like calls with audit bypass arguments."
+    message: "Transaction flow appears to bypass audit logging at line {line}."
+    fix_hint: "Emit an immutable audit event for transaction attempts and outcomes."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+        title: "OWASP Logging Cheat Sheet"
+    tags: ["audit", "transactions"]
+    enabled: true
+
+  - id: "ANAYA-AUDIT-003"
+    name: "Authentication Audit Bypass"
+    description: "Authentication flows must not bypass audit logging."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(login|authenticate|verify_otp|reset_password)[A-Za-z0-9_]*\([^;\n]*(skip_audit\s*[:=]\s*(True|true)|audit\s*[:=]\s*(False|false))'
+        description: "Matches authentication-like calls with audit bypass arguments."
+    message: "Authentication flow appears to bypass audit logging at line {line}."
+    fix_hint: "Record authentication attempts, failures, and sensitive account events."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+        title: "OWASP Logging Cheat Sheet"
+    tags: ["audit", "authentication"]
+    enabled: true
