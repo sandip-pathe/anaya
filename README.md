@@ -104,6 +104,7 @@ python -m ruff check .
 The same commands are wrapped in the repository `Makefile` for contributors who have `make` installed.
 
 For human product checks after automated tests pass, see `docs/MANUAL_CHECKS.md`.
+For the full engineering handoff, see `docs/TECHNICAL_ARCHITECTURE.md`.
 For GitHub Actions SARIF upload, see `docs/GITHUB_ACTION.md`.
 For local GitHub App API setup, see `docs/GITHUB_APP.md`.
 For optional OpenAI-backed rules, see `docs/LLM_RULES.md`.
