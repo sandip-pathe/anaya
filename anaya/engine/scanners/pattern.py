@@ -36,7 +36,7 @@ class PatternScanner(Scanner):
             return []
 
         violations: list[Violation] = []
-        seen: set[tuple[str, int]] = set()
+        seen: set[tuple[str, int, str]] = set()
 
         for rule in rules:
             if not _rule_applies(rule, language):
@@ -50,7 +50,7 @@ class PatternScanner(Scanner):
                     match = re.search(pattern.regex, line, re.IGNORECASE)
                     if not match:
                         continue
-                    key = (rule.id, line_number)
+                    key = (rule.id, line_number, line.strip())
                     if key in seen:
                         continue
                     seen.add(key)
@@ -82,7 +82,12 @@ def _rule_applies(rule: Rule, language: str) -> bool:
 
 def _has_inline_suppression(line: str, rule_id: str) -> bool:
     lowered = line.lower()
-    return f"noqa: {rule_id.lower()}" in lowered or "noqa: anaya" in lowered
+    return (
+        f"noqa: {rule_id.lower()}" in lowered
+        or f"noqa:{rule_id.lower()}" in lowered
+        or "noqa: anaya" in lowered
+        or "noqa:anaya" in lowered
+    )
 
 
 def _build_violation(

@@ -25,6 +25,7 @@ def test_table_report_includes_findings_and_fixes():
     rendered = format_table(_dirty_summary())
 
     assert "Anaya Policy Scan" in rendered
+    assert "Rules checked:" in rendered
     assert "ANAYA-SEC-001" in rendered
     assert "Fix:" in rendered
 

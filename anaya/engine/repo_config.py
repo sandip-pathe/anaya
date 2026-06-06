@@ -8,6 +8,10 @@ from typing import Any
 
 import yaml
 
+from anaya.engine.models import SEVERITY_ORDER, SUPPORTED_LANGUAGES
+from anaya.engine.orchestrator import resolve_pack_identifier
+from anaya.engine.rule_loader import RulePackError, load_rule_pack
+
 
 DEFAULT_PACKS = (
     "generic/secrets-detection",
@@ -74,20 +78,50 @@ def load_repository_config(path: str | Path | None) -> RepositoryConfig:
     scan_raw = _mapping(raw.get("scan", {}), "scan", config_path)
     thresholds_raw = _mapping(raw.get("thresholds", {}), "thresholds", config_path)
     ignore_raw = _mapping(raw.get("ignore", {}), "ignore", config_path)
+    ignore_paths = _string_tuple(ignore_raw.get("paths", []), "ignore.paths", config_path)
+    ignore_rules = _string_tuple(ignore_raw.get("rules", []), "ignore.rules", config_path)
+
+    scan_mode = str(scan_raw.get("mode", "diff"))
+    if scan_mode not in {"diff", "full"}:
+        raise RepositoryConfigError(f"{config_path}: scan.mode must be 'diff' or 'full'")
+
+    fail_on = str(thresholds_raw.get("fail_on", "CRITICAL")).upper()
+    warn_on = str(thresholds_raw.get("warn_on", "HIGH")).upper()
+    _validate_severity(fail_on, "thresholds.fail_on", config_path)
+    _validate_severity(warn_on, "thresholds.warn_on", config_path)
+
+    languages = _string_tuple(scan_raw.get("languages", []), "scan.languages", config_path)
+    unknown_languages = sorted(set(languages) - SUPPORTED_LANGUAGES)
+    if unknown_languages:
+        raise RepositoryConfigError(
+            f"{config_path}: unsupported language(s): {', '.join(unknown_languages)}"
+        )
+
+    known_rule_ids: set[str] = set()
+    for pack in packs:
+        try:
+            pack_path = resolve_pack_identifier(pack, base_dir=config_path.parent)
+        except FileNotFoundError as exc:
+            raise RepositoryConfigError(f"{config_path}: unknown pack {pack!r}") from exc
+        try:
+            known_rule_ids.update(rule.id for rule in load_rule_pack(pack_path).rules)
+        except RulePackError as exc:
+            raise RepositoryConfigError(f"{config_path}: invalid pack {pack!r}: {exc}") from exc
+
+    unknown_ignored_rules = sorted(set(ignore_rules) - known_rule_ids)
+    if unknown_ignored_rules:
+        raise RepositoryConfigError(
+            f"{config_path}: ignore.rules contains unknown rule(s): "
+            f"{', '.join(unknown_ignored_rules)}"
+        )
 
     return RepositoryConfig(
         version=str(raw.get("version", "1")),
         packs=packs,
-        scan_mode=str(scan_raw.get("mode", "diff")),
-        languages=_string_tuple(scan_raw.get("languages", []), "scan.languages", config_path),
-        thresholds=ThresholdConfig(
-            fail_on=str(thresholds_raw.get("fail_on", "CRITICAL")).upper(),
-            warn_on=str(thresholds_raw.get("warn_on", "HIGH")).upper(),
-        ),
-        ignore=IgnoreConfig(
-            paths=_string_tuple(ignore_raw.get("paths", []), "ignore.paths", config_path),
-            rules=_string_tuple(ignore_raw.get("rules", []), "ignore.rules", config_path),
-        ),
+        scan_mode=scan_mode,
+        languages=languages,
+        thresholds=ThresholdConfig(fail_on=fail_on, warn_on=warn_on),
+        ignore=IgnoreConfig(paths=ignore_paths, rules=ignore_rules),
     )
 
 
@@ -120,3 +154,8 @@ def _string_tuple(raw: Any, name: str, config_path: Path) -> tuple[str, ...]:
     if not isinstance(raw, list) or not all(isinstance(item, str) for item in raw):
         raise RepositoryConfigError(f"{config_path}: {name} must be a string list")
     return tuple(raw)
+
+
+def _validate_severity(value: str, name: str, config_path: Path) -> None:
+    if value not in SEVERITY_ORDER:
+        raise RepositoryConfigError(f"{config_path}: {name} has invalid severity {value!r}")

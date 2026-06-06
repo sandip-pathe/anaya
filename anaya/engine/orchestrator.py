@@ -6,9 +6,9 @@ from fnmatch import fnmatch
 from pathlib import Path
 from time import perf_counter
 
-from anaya.engine.models import RulePack, ScanResult, ScanSummary, Violation, severity_at_least
+from anaya.engine.models import Rule, RulePack, ScanResult, ScanSummary, Violation, severity_at_least
 from anaya.engine.rule_loader import load_rule_pack
-from anaya.engine.scanners.pattern import PatternScanner, supported_source_file
+from anaya.engine.scanners.pattern import PatternScanner, detect_language, supported_source_file
 
 
 DEFAULT_IGNORES = (
@@ -21,6 +21,7 @@ DEFAULT_IGNORES = (
     "build/**",
     "*.generated.*",
 )
+MAX_FILE_SIZE_BYTES = 1_000_000
 
 
 class ScanOrchestrator:
@@ -43,11 +44,18 @@ class ScanOrchestrator:
         warn_on: str = "HIGH",
         ignore: tuple[str, ...] = DEFAULT_IGNORES,
         ignored_rules: tuple[str, ...] = (),
+        languages: tuple[str, ...] = (),
+        config_path: str | None = None,
     ) -> ScanSummary:
         started = perf_counter()
-        files = _collect_files(paths, ignore)
+        files, skipped_files = collect_files(paths, ignore, languages=languages)
         ignored_rule_ids = set(ignored_rules)
-        active_rules = [rule for rule in self.rules if rule.id not in ignored_rule_ids]
+        selected_languages = set(languages)
+        active_rules = [
+            rule
+            for rule in self.rules
+            if rule.id not in ignored_rule_ids and _rule_matches_selected_languages(rule, selected_languages)
+        ]
 
         results: list[ScanResult] = []
         for file_path in files:
@@ -70,7 +78,17 @@ class ScanOrchestrator:
 
         scan_duration_ms = (perf_counter() - started) * 1000
         all_violations = [violation for result in results for violation in result.violations]
-        return _summarize(results, all_violations, fail_on, warn_on, scan_duration_ms)
+        return _summarize(
+            results,
+            all_violations,
+            fail_on,
+            warn_on,
+            scan_duration_ms,
+            rules_checked=len(active_rules),
+            skipped_files=skipped_files,
+            pack_versions={pack.id: pack.version for pack in self.packs},
+            config_path=config_path,
+        )
 
 
 def built_in_pack_paths() -> list[Path]:
@@ -80,10 +98,14 @@ def built_in_pack_paths() -> list[Path]:
     return sorted(packs_dir.glob("**/*.yml"))
 
 
-def resolve_pack_identifier(identifier: str | Path) -> Path:
+def resolve_pack_identifier(identifier: str | Path, *, base_dir: str | Path | None = None) -> Path:
     """Resolve a file path or built-in pack id like generic/secrets-detection."""
 
     candidate = Path(identifier)
+    if base_dir is not None and not candidate.is_absolute():
+        scoped_candidate = Path(base_dir) / candidate
+        if scoped_candidate.exists():
+            return scoped_candidate
     if candidate.exists():
         return candidate
     packs_dir = Path(__file__).resolve().parents[1] / "packs"
@@ -93,22 +115,88 @@ def resolve_pack_identifier(identifier: str | Path) -> Path:
     raise FileNotFoundError(f"Unknown pack: {identifier}")
 
 
-def _collect_files(paths: list[str | Path], ignore: tuple[str, ...]) -> list[Path]:
+def collect_files(
+    paths: list[str | Path],
+    ignore: tuple[str, ...],
+    *,
+    languages: tuple[str, ...] = (),
+) -> tuple[list[Path], dict[str, int]]:
     files: list[Path] = []
+    skipped = {
+        "ignored": 0,
+        "unsupported": 0,
+        "language_filtered": 0,
+        "binary": 0,
+        "too_large": 0,
+        "missing": 0,
+    }
+    selected_languages = set(languages)
     for raw_path in paths:
         path = Path(raw_path)
-        if path.is_file() and supported_source_file(path) and not _ignored(path, ignore):
-            files.append(path)
+        if not path.exists():
+            skipped["missing"] += 1
+            continue
+        if path.is_file():
+            _append_file(path, ignore, files, skipped, selected_languages)
         elif path.is_dir():
             for child in path.rglob("*"):
-                if supported_source_file(child) and not _ignored(child, ignore):
-                    files.append(child)
-    return sorted(dict.fromkeys(files))
+                if child.is_file():
+                    _append_file(child, ignore, files, skipped, selected_languages)
+    return sorted(dict.fromkeys(files)), {key: value for key, value in skipped.items() if value}
+
+
+def _append_file(
+    path: Path,
+    ignore: tuple[str, ...],
+    files: list[Path],
+    skipped: dict[str, int],
+    selected_languages: set[str],
+) -> None:
+    if _ignored(path, ignore):
+        skipped["ignored"] += 1
+        return
+    if not supported_source_file(path):
+        skipped["unsupported"] += 1
+        return
+    language = detect_language(str(path))
+    if selected_languages and language not in selected_languages:
+        skipped["language_filtered"] += 1
+        return
+    try:
+        if path.stat().st_size > MAX_FILE_SIZE_BYTES:
+            skipped["too_large"] += 1
+            return
+        if _looks_binary(path):
+            skipped["binary"] += 1
+            return
+    except OSError:
+        skipped["missing"] += 1
+        return
+    files.append(path)
 
 
 def _ignored(path: Path, ignore: tuple[str, ...]) -> bool:
     normalized = path.as_posix()
-    return any(fnmatch(normalized, pattern) for pattern in ignore)
+    parts = set(path.parts)
+    return any(
+        fnmatch(normalized, pattern)
+        or fnmatch(path.name, pattern)
+        or pattern.rstrip("/**") in parts
+        for pattern in ignore
+    )
+
+
+def _looks_binary(path: Path) -> bool:
+    sample = path.read_bytes()[:2048]
+    return b"\x00" in sample
+
+
+def _rule_matches_selected_languages(rule: Rule, selected_languages: set[str]) -> bool:
+    return (
+        not selected_languages
+        or not rule.languages
+        or bool(set(rule.languages) & selected_languages)
+    )
 
 
 def _summarize(
@@ -117,6 +205,11 @@ def _summarize(
     fail_on: str,
     warn_on: str,
     scan_duration_ms: float,
+    *,
+    rules_checked: int,
+    skipped_files: dict[str, int],
+    pack_versions: dict[str, str],
+    config_path: str | None,
 ) -> ScanSummary:
     by_severity = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0}
     by_pack: dict[str, dict[str, int | str]] = {}
@@ -146,4 +239,8 @@ def _summarize(
         overall_status=status,
         scan_duration_ms=scan_duration_ms,
         results=tuple(results),
+        rules_checked=rules_checked,
+        skipped_files=skipped_files,
+        pack_versions=pack_versions,
+        config_path=config_path,
     )

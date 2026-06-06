@@ -7,6 +7,7 @@ from typing import Optional
 
 import typer
 
+from anaya.engine.git_utils import GitDiffError, changed_files_since
 from anaya.engine.orchestrator import (
     DEFAULT_IGNORES,
     ScanOrchestrator,
@@ -47,6 +48,7 @@ def scan(
         help="Output format: table, json, or sarif.",
     ),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Write output to a file."),
+    diff: Optional[str] = typer.Option(None, "--diff", help="Scan files changed since REF."),
     fail_on: Optional[str] = typer.Option(None, "--fail-on", help="Minimum severity that fails."),
     warn_on: Optional[str] = typer.Option(None, "--warn-on", help="Minimum severity that warns."),
 ) -> None:
@@ -55,14 +57,28 @@ def scan(
     config_path = None if no_config else (config if config is not None else find_config(path))
     repo_config = load_repository_config(config_path)
     pack_ids = tuple(pack) if pack else repo_config.packs
-    pack_paths = [resolve_pack_identifier(item) for item in pack_ids]
+    pack_base_dir = config_path.parent if config_path else None
+    pack_paths = [resolve_pack_identifier(item, base_dir=pack_base_dir) for item in pack_ids]
     orchestrator = ScanOrchestrator.from_pack_paths(pack_paths)
+    scan_paths = [path]
+    if diff:
+        diff_cwd = path if path.is_dir() else path.parent
+        try:
+            changed_paths = changed_files_since(diff, cwd=diff_cwd)
+        except GitDiffError as exc:
+            raise typer.BadParameter(str(exc)) from exc
+        scan_paths = [
+            changed_path if changed_path.is_absolute() else diff_cwd / changed_path
+            for changed_path in changed_paths
+        ]
     summary = orchestrator.scan_paths(
-        [path],
+        scan_paths,
         fail_on=(fail_on or repo_config.thresholds.fail_on),
         warn_on=(warn_on or repo_config.thresholds.warn_on),
         ignore=DEFAULT_IGNORES + repo_config.ignore.paths,
         ignored_rules=repo_config.ignore.rules,
+        languages=repo_config.languages,
+        config_path=str(config_path) if config_path else None,
     )
 
     rendered = _render(summary, output_format)

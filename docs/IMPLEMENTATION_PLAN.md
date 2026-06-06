@@ -98,7 +98,7 @@ Known gaps:
 - No audit-logging pack yet
 - SARIF is minimal and needs schema-quality validation
 - Table output is plain text, not Rich-polished
-- No diff scanning yet
+- Diff-file scanning exists; changed-line-aware annotations are still future work
 - No GitHub App in the new app
 - No FastAPI, Celery, Redis, or Docker yet
 - No GitHub Check Runs API

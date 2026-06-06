@@ -12,11 +12,14 @@ def format_table(summary: ScanSummary) -> str:
         f"Anaya Policy Scan - {summary.total_violations} violation(s)",
         f"Status: {summary.overall_status}",
         f"Files scanned: {summary.total_files}",
+        f"Rules checked: {summary.rules_checked}",
         f"Duration: {summary.scan_duration_ms:.1f} ms",
         "",
         "Severity: "
         + ", ".join(f"{name}={count}" for name, count in summary.by_severity.items() if count),
     ]
+    if summary.skipped_files:
+        lines.append("Skipped: " + ", ".join(f"{key}={value}" for key, value in summary.skipped_files.items()))
 
     if summary.by_pack:
         lines.extend(["", "Packs:"])

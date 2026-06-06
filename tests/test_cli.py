@@ -1,4 +1,5 @@
 from pathlib import Path
+import subprocess
 
 from typer.testing import CliRunner
 
@@ -93,3 +94,76 @@ def test_scan_rejects_unknown_format():
 
     assert result.exit_code != 0
     assert "format must be one of" in result.output
+
+
+def test_scan_diff_uses_changed_files(tmp_path: Path):
+    runner = CliRunner()
+    source = tmp_path / "source.py"
+
+    subprocess.run(["git", "init", "-b", "main"], cwd=tmp_path, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.com"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Test User"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    source.write_text("print('clean')\n", encoding="utf-8")
+    subprocess.run(["git", "add", "."], cwd=tmp_path, check=True, capture_output=True)
+    subprocess.run(["git", "commit", "-m", "initial"], cwd=tmp_path, check=True, capture_output=True)
+    source.write_text('api_key = "sk_live_1234567890abcdef"\n', encoding="utf-8")
+
+    result = runner.invoke(app, ["scan", str(tmp_path), "--no-config", "--diff", "HEAD"])
+
+    assert result.exit_code == 1
+    assert "ANAYA-SEC-001" in result.output
+
+
+def test_scan_config_resolves_custom_pack_relative_to_config(tmp_path: Path):
+    runner = CliRunner()
+    pack_dir = tmp_path / "packs"
+    pack_dir.mkdir()
+    pack_path = pack_dir / "custom.yml"
+    config_path = tmp_path / "anaya.yml"
+    source_path = tmp_path / "service.py"
+
+    pack_path.write_text(
+        "\n".join(
+            [
+                "pack:",
+                '  id: "custom/internal-policy"',
+                '  version: "1.0.0"',
+                '  name: "Internal Policy"',
+                '  description: "User-authored policy pack"',
+                "rules:",
+                '  - id: "CUSTOM-001"',
+                '    name: "No Debug Payment Bypass"',
+                '    description: "Debug payment bypass must not be enabled."',
+                "    type: pattern",
+                "    severity: HIGH",
+                "    languages: [python]",
+                "    patterns:",
+                "      - regex: 'debug_payment_bypass\\s*=\\s*True'",
+                '    message: "Debug payment bypass enabled at line {line}."',
+                '    fix_hint: "Remove the bypass flag."',
+                "    tags: [custom]",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    config_path.write_text(
+        "packs:\n  - packs/custom.yml\nthresholds:\n  fail_on: HIGH\n",
+        encoding="utf-8",
+    )
+    source_path.write_text("debug_payment_bypass = True\n", encoding="utf-8")
+
+    result = runner.invoke(app, ["scan", str(tmp_path), "--config", str(config_path)])
+
+    assert result.exit_code == 1
+    assert "CUSTOM-001" in result.output

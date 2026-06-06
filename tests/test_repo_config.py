@@ -1,6 +1,8 @@
 from pathlib import Path
 
-from anaya.engine.repo_config import find_config, load_repository_config
+import pytest
+
+from anaya.engine.repo_config import RepositoryConfigError, find_config, load_repository_config
 
 
 def test_load_repository_config_with_pack_mappings(tmp_path: Path):
@@ -41,3 +43,53 @@ def test_find_config_walks_parent_dirs(tmp_path: Path):
     config_path.write_text("packs:\n  - generic/secrets-detection\n", encoding="utf-8")
 
     assert find_config(nested) == config_path
+
+
+def test_repository_config_rejects_invalid_threshold(tmp_path: Path):
+    config_path = tmp_path / "anaya.yml"
+    config_path.write_text(
+        "packs:\n  - generic/secrets-detection\nthresholds:\n  fail_on: EXTREME\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(RepositoryConfigError, match="thresholds.fail_on"):
+        load_repository_config(config_path)
+
+
+def test_repository_config_rejects_unknown_pack(tmp_path: Path):
+    config_path = tmp_path / "anaya.yml"
+    config_path.write_text("packs:\n  - missing/pack\n", encoding="utf-8")
+
+    with pytest.raises(RepositoryConfigError, match="unknown pack"):
+        load_repository_config(config_path)
+
+
+def test_repository_config_rejects_invalid_scan_mode(tmp_path: Path):
+    config_path = tmp_path / "anaya.yml"
+    config_path.write_text(
+        "packs:\n  - generic/secrets-detection\nscan:\n  mode: everything\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(RepositoryConfigError, match="scan.mode"):
+        load_repository_config(config_path)
+
+
+def test_repository_config_rejects_unknown_ignored_rule(tmp_path: Path):
+    config_path = tmp_path / "anaya.yml"
+    config_path.write_text(
+        "\n".join(
+            [
+                "packs:",
+                "  - generic/secrets-detection",
+                "ignore:",
+                "  rules:",
+                "    - ANAYA-DOES-NOT-EXIST",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(RepositoryConfigError, match="ignore.rules"):
+        load_repository_config(config_path)

@@ -15,6 +15,18 @@ SEVERITY_ORDER = {
     "CRITICAL": 4,
 }
 
+SUPPORTED_LANGUAGES = {
+    "python",
+    "javascript",
+    "typescript",
+    "java",
+    "go",
+    "ruby",
+    "rust",
+}
+
+RULE_TYPES = {"pattern", "ast", "llm"}
+
 
 @dataclass(frozen=True)
 class RulePattern:
@@ -86,6 +98,10 @@ class ScanSummary:
     overall_status: str
     scan_duration_ms: float
     results: tuple[ScanResult, ...]
+    rules_checked: int = 0
+    skipped_files: dict[str, int] = field(default_factory=dict)
+    config_path: str | None = None
+    pack_versions: dict[str, str] = field(default_factory=dict)
 
 
 def severity_at_least(value: str, threshold: str) -> bool:

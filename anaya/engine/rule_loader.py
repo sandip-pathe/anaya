@@ -8,7 +8,10 @@ from typing import Any
 
 import yaml
 
-from anaya.engine.models import Rule, RulePack, RulePattern, SEVERITY_ORDER
+from anaya.engine.models import RULE_TYPES, SEVERITY_ORDER, SUPPORTED_LANGUAGES, Rule, RulePack, RulePattern
+
+
+SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$")
 
 
 class RulePackError(ValueError):
@@ -37,7 +40,13 @@ def load_rule_pack(path: str | Path) -> RulePack:
 
     pack_id = _require_str(pack_meta, "id", pack_path)
     pack_version = _require_str(pack_meta, "version", pack_path)
+    if not SEMVER_PATTERN.match(pack_version):
+        raise RulePackError(f"{pack_path}: pack version must be SemVer, got {pack_version!r}")
     rules = tuple(_load_rule(item, pack_id, pack_version, pack_path) for item in raw_rules)
+    rule_ids = [rule.id for rule in rules]
+    duplicate_ids = sorted({rule_id for rule_id in rule_ids if rule_ids.count(rule_id) > 1})
+    if duplicate_ids:
+        raise RulePackError(f"{pack_path}: duplicate rule id(s): {', '.join(duplicate_ids)}")
 
     return RulePack(
         id=pack_id,
@@ -76,10 +85,15 @@ def _load_rule(raw_rule: Any, pack_id: str, pack_version: str, pack_path: Path) 
     patterns = ()
     if rule_type == "pattern":
         patterns = tuple(_load_patterns(raw_rule, rule_id, pack_path))
-    elif rule_type not in {"ast", "llm"}:
+    elif rule_type not in RULE_TYPES:
         raise RulePackError(f"{pack_path}: {rule_id} has unknown type {rule_type!r}")
 
     references = tuple(_load_references(raw_rule.get("references", []), rule_id, pack_path))
+    unknown_languages = sorted(set(languages) - SUPPORTED_LANGUAGES)
+    if unknown_languages:
+        raise RulePackError(
+            f"{pack_path}: {rule_id} has unsupported language(s): {', '.join(unknown_languages)}"
+        )
 
     return Rule(
         id=rule_id,
@@ -92,7 +106,7 @@ def _load_rule(raw_rule: Any, pack_id: str, pack_version: str, pack_path: Path) 
         message=_require_str(raw_rule, "message", pack_path),
         fix_hint=_require_str(raw_rule, "fix_hint", pack_path),
         references=references,
-        tags=tuple(str(tag) for tag in raw_rule.get("tags", [])),
+        tags=_string_tuple(raw_rule.get("tags", []), "tags", rule_id, pack_path),
         enabled=bool(raw_rule.get("enabled", True)),
         pack_id=pack_id,
         pack_version=pack_version,
@@ -138,6 +152,8 @@ def _load_references(raw_refs: Any, rule_id: str, pack_path: Path) -> list[dict[
     for ref in raw_refs:
         if not isinstance(ref, dict):
             raise RulePackError(f"{pack_path}: {rule_id} reference entries must be mappings")
+        if "url" not in ref or "title" not in ref:
+            raise RulePackError(f"{pack_path}: {rule_id} references need url and title")
         refs.append({str(key): str(value) for key, value in ref.items()})
     return refs
 
@@ -161,3 +177,11 @@ def _require_str(raw: dict[str, Any], key: str, pack_path: Path) -> str:
     if not isinstance(value, str) or not value.strip():
         raise RulePackError(f"{pack_path}: missing string field {key!r}")
     return value
+
+
+def _string_tuple(raw: Any, field: str, rule_id: str, pack_path: Path) -> tuple[str, ...]:
+    if raw is None:
+        return ()
+    if not isinstance(raw, list) or not all(isinstance(item, str) for item in raw):
+        raise RulePackError(f"{pack_path}: {rule_id} {field} must be a string list")
+    return tuple(raw)

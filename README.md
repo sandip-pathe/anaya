@@ -33,6 +33,7 @@ python -m anaya.cli.main scan . --no-config --format json
 
 ```bash
 anaya scan PATH
+anaya scan PATH --diff HEAD~1
 anaya init
 anaya validate-pack anaya\packs\generic\secrets-detection.yml
 anaya packs list
@@ -44,10 +45,31 @@ Custom packs are first-class:
 anaya scan . --pack path\to\my-policy-pack.yml
 ```
 
+Pack paths in `anaya.yml` are resolved relative to the config file.
+
+Diff scans are supported for local Git worktrees:
+
+```bash
+anaya scan . --diff origin/main
+```
+
 ## Repository Config
 
 `anaya scan` auto-discovers `anaya.yml` from the scanned path or its parents.
 Use `--config path\to\anaya.yml` to choose a specific config file.
+
+Repository config can choose packs, thresholds, ignored paths, ignored rule IDs, and language filters:
+
+```yaml
+scan:
+  languages: [python, javascript]
+
+ignore:
+  rules:
+    - ANAYA-SEC-006
+```
+
+Configured packs, thresholds, languages, and ignored rule IDs are validated before scanning.
 
 ## Status
 
