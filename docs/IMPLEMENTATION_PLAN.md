@@ -6,11 +6,11 @@ Inputs: `ANAYA_SPEC.py`, `deck.html`, `rbi-compliance-scanner`, `fintech-demo`, 
 
 ## 1. Product Intent
 
-Anaya is a compliance-as-code engine that turns policy requirements into executable code checks at pull request time.
+Anaya is a policy-pack-agnostic compliance-as-code engine that turns policy requirements into executable code checks at pull request time.
 
 The V1 product has two surfaces over one shared engine:
 
-- CLI: local developer and CI usage through `anaya scan`
+- CLI: local developer and CI usage through `anaya scan`. The CLI is OSS, similar in spirit to Semgrep.
 - GitHub App: PR-native checks through GitHub Check Runs, inline annotations, and SARIF upload
 
 The product thesis from the deck is: compliance fails in code, not in policy decks. Developers miss regulatory constraints because the signal is trapped in PDFs, circulars, and review processes instead of appearing in the pull request where code changes happen.
@@ -21,7 +21,7 @@ V1 must stay narrow:
 - No billing system
 - No Slack/Jira bot
 - No runtime monitoring
-- Deterministic scanners first; LLM fallback only when explicitly enabled
+- Deterministic scanners first; OpenAI-backed LLM fallback only when explicitly enabled
 
 ## 2. Business And Packaging Direction
 
@@ -32,6 +32,7 @@ Open core:
   - CLI
   - GitHub Action or self-hosted workflow
   - Generic rule packs
+  - User-authored custom policy packs
   - Community rule packs
   - Limited hosted GitHub App tier later
 - Paid/proprietary later:
@@ -59,7 +60,7 @@ Useful as reference:
 Do not port:
 
 - Agent/orchestrator engine
-- Gemini-first judging model
+- AI-first judging model
 - Old rule YAML
 - Synchronous Flask PR handler
 - PR-comment/commit-status output model
@@ -103,6 +104,7 @@ Known gaps:
 - No GitHub Check Runs API
 - No GitHub Code Scanning SARIF upload
 - No LLM fallback module
+- No OpenAI integration module yet
 - No JavaScript fixtures yet
 - No CI workflow yet
 - README still says "one initial generic rule pack" and should be updated to reflect four packs
@@ -118,7 +120,7 @@ GitHub PR
   -> Worker fetches anaya.yml from default branch
   -> Worker fetches PR diff files
   -> Shared Anaya engine loads packs
-  -> Pattern scanner + AST scanner + optional LLM judge
+  -> Pattern scanner + AST scanner + optional OpenAI judge
   -> Reporters produce Check Run annotations + SARIF + summary
   -> GitHub Check Run completed
   -> Optional SARIF upload to Code Scanning
@@ -142,7 +144,7 @@ anaya scan PATH
    Rule behavior belongs in pack YAML except scanner mechanics.
 
 2. Deterministic by default.
-   Pattern and AST checks run first. LLM checks are opt-in and non-blocking on failure.
+   Pattern and AST checks run first. OpenAI checks are opt-in and non-blocking on failure.
 
 3. GitHub-native output.
    V1 should use Check Runs and annotations, not only PR comments.
@@ -166,7 +168,7 @@ Tasks:
 
 - Rotate the committed GitHub App private key.
 - Rotate the GitHub webhook secret.
-- Rotate Gemini/OpenAI keys that appeared in local `.env`.
+- Rotate old prototype AI-provider keys and any OpenAI keys that appeared in local `.env`.
 - Decide whether to rewrite old repo history or archive the old repo as compromised-prototype history.
 - Add `.gitignore` coverage for `.env`, `*.pem`, generated outputs, caches, and local secrets.
 - Create a fresh Git repo for `anaya/` or move it into the intended main repo.
@@ -255,6 +257,7 @@ Tasks:
 Acceptance:
 
 - Engine tests cover valid/invalid packs and config.
+- External custom policy packs can be loaded and scanned by the OSS CLI.
 - No duplicate findings for same file/line/rule.
 - Dirty fixtures trigger expected rules.
 - Clean fixtures pass.
@@ -524,21 +527,21 @@ Acceptance:
 - Webhook response time under 1 second.
 - Typical scan under 30 seconds.
 
-### M9. Optional LLM Judge
+### M9. Optional OpenAI Judge
 
-Goal: add AI reasoning only where deterministic rules are insufficient.
+Goal: add OpenAI-assisted reasoning only where deterministic rules are insufficient.
 
 Tasks:
 
 - Add optional extra dependency:
-  - `google-generativeai`
+  - `openai`
 - Add `anaya/llm/judge.py`.
 - Add `anaya/llm/prompts.py`.
 - Support `type: llm` rules.
 - Enforce guards:
   - only runs when `llm.enabled: true`
   - file-scope or function-scope, not line-by-line
-  - Gemini Flash
+  - OpenAI model configured through Anaya settings
   - max tokens capped at 300
   - temperature 0.1
   - 10 second timeout
@@ -552,7 +555,7 @@ Tasks:
 
 Acceptance:
 
-- No live Gemini calls in tests.
+- No live OpenAI calls in tests.
 - Mocked LLM responses produce deterministic outcomes.
 - API failure never blocks or creates false violations.
 - LLM rules disabled by default.
@@ -599,7 +602,7 @@ Tasks:
   - `india/dpdp-privacy`
   - `india/sebi-cybersecurity`
 - Translate RBI prototype ideas into new schema.
-- Avoid Gemini-first compliance judgment.
+- Avoid AI-first compliance judgment.
 - Add references to regulations in YAML.
 - Add audit export metadata.
 - Add stronger fixture corpus from `fintech-demo`.
@@ -730,7 +733,7 @@ Recommendation:
 
 5. LLM timing:
    - Spec places LLM in Phase 7.
-   - Recommendation: keep it last. It is not needed to prove V1.
+   - Recommendation: keep OpenAI integration late. It is not needed to prove V1.
 
 6. Tree-sitter scope:
    - Python and JavaScript first.
@@ -759,7 +762,7 @@ After that:
 14. Implement Check Runs API.
 15. Implement Celery worker and Redis token cache.
 16. End-to-end GitHub App test on a demo repo.
-17. Add optional LLM judge.
+17. Add optional OpenAI judge.
 18. Prepare deployment/demo docs.
 
 ## 13. V1 Definition Of Done
@@ -807,4 +810,3 @@ Narrative:
 - The rule appears where the code change happens.
 - The output explains the problem and the fix.
 - The same engine works locally, in CI, and in GitHub App mode.
-

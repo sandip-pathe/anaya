@@ -26,15 +26,18 @@ done outside this local workspace:
    - Update GitHub App settings.
    - Update local `.env`.
 
-3. Gemini API key:
+3. Legacy AI-provider API key from the old prototype, if present:
    - Revoke the old key.
-   - Generate a new key.
-   - Update local `.env`.
+   - Do not add non-OpenAI LLM configuration to Anaya.
 
 4. OpenAI API key:
    - Revoke the old key.
    - Generate a new key.
    - Update local `.env`.
+
+Anaya uses OpenAI for any future optional LLM fallback. Other LLM providers
+belong only to archived prototype context and should not be carried into the
+product.
 
 ## History Decision
 

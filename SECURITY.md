@@ -20,9 +20,13 @@ Before pushing, deploying, or using the old GitHub App again:
 1. Generate a new GitHub App private key in GitHub App settings.
 2. Delete/revoke the old private key in GitHub.
 3. Rotate the GitHub webhook secret.
-4. Rotate local Gemini and OpenAI keys that were present in `.env`.
-5. Update local `.env` files with the new values.
-6. Keep the old prototype repository history private or rewrite/archive it.
+4. Rotate local legacy AI-provider keys from the old prototype if present.
+5. Rotate local OpenAI keys that were present in `.env`.
+6. Update local `.env` files with the new values.
+7. Keep the old prototype repository history private or rewrite/archive it.
+
+Anaya V1 uses OpenAI for any future optional LLM fallback. Other LLM providers
+are not part of the Anaya product direction.
 
 ## Repository Direction
 
