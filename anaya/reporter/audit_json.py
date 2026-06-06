@@ -20,6 +20,7 @@ def format_audit_json(summary: ScanSummary) -> str:
             "pack_versions": summary.pack_versions,
             "rules_checked": summary.rules_checked,
             "skipped_files": summary.skipped_files,
+            "warnings": summary.warnings,
         },
         "summary": {
             "total_files": summary.total_files,

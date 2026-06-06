@@ -34,6 +34,27 @@ def test_load_repository_config_with_pack_mappings(tmp_path: Path):
     assert config.thresholds.warn_on == "MEDIUM"
     assert config.ignore.paths == ("tests/**",)
     assert config.ignore.rules == ("ANAYA-SEC-001",)
+    assert config.llm.enabled is False
+
+
+def test_load_repository_config_enables_llm_only_when_requested(tmp_path: Path):
+    config_path = tmp_path / "anaya.yml"
+    config_path.write_text(
+        "\n".join(
+            [
+                "packs:",
+                "  - generic/secrets-detection",
+                "llm:",
+                "  enabled: true",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    config = load_repository_config(config_path)
+
+    assert config.llm.enabled is True
 
 
 def test_find_config_walks_parent_dirs(tmp_path: Path):
@@ -92,4 +113,15 @@ def test_repository_config_rejects_unknown_ignored_rule(tmp_path: Path):
     )
 
     with pytest.raises(RepositoryConfigError, match="ignore.rules"):
+        load_repository_config(config_path)
+
+
+def test_repository_config_rejects_non_boolean_llm_enabled(tmp_path: Path):
+    config_path = tmp_path / "anaya.yml"
+    config_path.write_text(
+        "packs:\n  - generic/secrets-detection\nllm:\n  enabled: sometimes\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(RepositoryConfigError, match="llm.enabled"):
         load_repository_config(config_path)

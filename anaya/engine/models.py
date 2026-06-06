@@ -102,6 +102,7 @@ class ScanSummary:
     skipped_files: dict[str, int] = field(default_factory=dict)
     config_path: str | None = None
     pack_versions: dict[str, str] = field(default_factory=dict)
+    warnings: tuple[str, ...] = ()
 
 
 def severity_at_least(value: str, threshold: str) -> bool:

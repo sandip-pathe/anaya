@@ -8,6 +8,7 @@ from typing import Optional
 
 import typer
 
+from anaya.config import load_settings
 from anaya.engine.git_utils import GitDiffError, changed_files_since
 from anaya.engine.orchestrator import (
     DEFAULT_IGNORES,
@@ -23,6 +24,7 @@ from anaya.engine.repo_config import (
     load_repository_config,
 )
 from anaya.engine.rule_loader import RulePackError, load_rule_pack, validate_rule_pack
+from anaya.llm.judge import create_openai_judge
 from anaya.reporter.audit_json import format_audit_json
 from anaya.reporter.check_run import build_check_run_payloads
 from anaya.reporter.json_report import format_json
@@ -211,10 +213,21 @@ def _load_scan_context(
         pack_ids = tuple(pack) if pack else repo_config.packs
         pack_base_dir = None if pack else (config_path.parent if config_path else None)
         pack_paths = [resolve_pack_identifier(item, base_dir=pack_base_dir) for item in pack_ids]
-        orchestrator = ScanOrchestrator.from_pack_paths(pack_paths)
+        llm_judge, llm_warnings = _llm_judge_for_config(repo_config)
+        orchestrator = ScanOrchestrator.from_pack_paths(
+            pack_paths,
+            llm_judge=llm_judge,
+            llm_warnings=llm_warnings,
+        )
     except (FileNotFoundError, RepositoryConfigError, RulePackError) as exc:
         raise typer.BadParameter(str(exc)) from exc
     return config_path, repo_config, orchestrator
+
+
+def _llm_judge_for_config(repo_config: RepositoryConfig):
+    if not repo_config.llm.enabled:
+        return None, ()
+    return create_openai_judge(load_settings())
 
 
 def _write_or_echo(rendered: str, output: Path | None) -> None:

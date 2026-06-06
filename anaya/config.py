@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     github_upload_sarif: bool = False
     redis_url: str = "redis://localhost:6379/0"
     openai_api_key: str | None = None
+    openai_model: str = "gpt-4o-mini"
+    openai_max_tokens: int = 300
+    openai_temperature: float = 0.1
+    openai_timeout_seconds: float = 10.0
     host: str = "0.0.0.0"
     port: int = 3000
     log_level: str = "INFO"

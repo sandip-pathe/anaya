@@ -95,6 +95,9 @@ Already implemented:
 - `anaya test-rule --rule RULE_ID --file FILE`
 - Audit JSON, GitHub Check Run, PR comment, and SARIF reporters
 - Python AST scanner for function-level missing-call rules
+- FastAPI GitHub App webhook foundation
+- In-process PR scan worker with Check Run updates and optional SARIF upload
+- Optional OpenAI judge for `type: llm` rules, disabled by default
 - Tests passing and Ruff clean
 
 Known gaps:
@@ -103,12 +106,11 @@ Known gaps:
 - SARIF has schema contract tests but still needs live GitHub Code Scanning upload verification
 - Table output is plain text with metadata, not Rich-polished
 - Diff-file scanning exists; changed-line-aware annotations are still future work
-- No GitHub App in the new app
-- No FastAPI, Celery, Redis, or Docker yet
-- No GitHub Check Runs API
-- No hosted GitHub Code Scanning SARIF upload flow yet
-- No LLM fallback module
-- No OpenAI integration module yet
+- No Redis/Celery hosted queue yet
+- No Docker or deployment assets yet
+- No live GitHub App ngrok verification yet
+- No live GitHub Code Scanning SARIF upload verification yet
+- No live OpenAI integration test yet; automated LLM coverage uses mocked clients only
 
 ## 4. Target Architecture
 
@@ -588,6 +590,20 @@ Acceptance:
 
 Goal: add OpenAI-assisted reasoning only where deterministic rules are insufficient.
 
+Status:
+
+- Optional `openai` dependency is declared under the `llm` extra.
+- `anaya/llm/judge.py` and `anaya/llm/prompts.py` implement the OpenAI adapter and prompt contract.
+- Rule loader validates `type: llm` rules with `llm.scope` and `llm.prompt`.
+- Repository config supports `llm.enabled`, defaulting to false.
+- CLI and GitHub worker only configure a judge when trusted config enables LLM.
+- OpenAI model, output token cap, temperature, and timeout come from Anaya settings.
+- Runtime caps output tokens at 300, temperature at 0.1, and timeout at 10 seconds.
+- OpenAI calls use structured JSON decisions with `PASS`, `WARN`, `FAIL`, confidence, reason, and optional line number.
+- 429 and 5xx errors retry once; all OpenAI/config/output failures become warnings, not findings.
+- Automated tests use mocked clients only; no live OpenAI calls are required.
+- Function scope currently supports Python functions; JavaScript/TypeScript function scope waits for the later JavaScript AST milestone.
+
 Tasks:
 
 - Add optional extra dependency:
@@ -789,8 +805,8 @@ Recommendation:
    - Confirm RBI/SEBI/DPDP are private/proprietary.
 
 5. LLM timing:
-   - Spec places LLM in Phase 7.
-   - Recommendation: keep OpenAI integration late. It is not needed to prove V1.
+   - Resolved: optional OpenAI integration landed in M9.
+   - LLM remains disabled by default and is not required to prove deterministic V1 value.
 
 6. Tree-sitter scope:
    - Python and JavaScript first.
@@ -798,24 +814,28 @@ Recommendation:
 
 ## 12. Suggested Execution Order
 
-Next 10 concrete tasks:
+Current stop point after M9:
+
+- M9 is complete.
+- M10 Deployment And Demo Readiness is the next milestone and has not started.
+- Do not add Dockerfile, Docker Compose, ngrok/live GitHub checks, or deployment docs until M10 is explicitly started.
+
+Remaining pre-deployment hardening backlog:
 
 1. Add failure-path Check Run updates so scans never stay in progress.
 2. Add retry/backoff behavior for GitHub 401, 429, and 5xx responses.
-3. Add Redis/Celery queue adapter and token cache.
-4. Add Docker Compose with Redis for hosted mode.
-5. Run live GitHub App ngrok test on a demo repo.
-6. Run live GitHub Code Scanning SARIF upload check.
-7. Add Rich table rendering while preserving `--no-color`.
-8. Add JavaScript/TypeScript AST support.
-9. Add TypeScript fixture matrix.
-10. Run false-positive review on `fintech-demo` and capture findings.
+3. Add Redis/Celery queue adapter and token cache, without deployment assets.
+4. Add Rich table rendering while preserving `--no-color`.
+5. Add JavaScript/TypeScript AST support.
+6. Add TypeScript fixture matrix.
+7. Run false-positive review on `fintech-demo` and capture findings.
 
-After that:
+Deployment/demo tasks begin with M10:
 
-11. End-to-end GitHub App test on a demo repo.
-12. Add optional OpenAI judge.
-13. Prepare deployment/demo docs.
+1. Add Dockerfile and Docker Compose.
+2. Run live GitHub App ngrok test on a demo repo.
+3. Run live GitHub Code Scanning SARIF upload check.
+4. Prepare deployment/demo docs and walkthrough assets.
 
 ## 13. V1 Definition Of Done
 

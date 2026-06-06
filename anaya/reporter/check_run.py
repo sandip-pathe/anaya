@@ -86,6 +86,8 @@ def _summary_markdown(
             f"Showing annotations {batch_index + 1} of {batch_count}; "
             f"{total_annotations} total annotations were produced."
         )
+    if summary.warnings:
+        lines.append("**Warnings:** " + "; ".join(summary.warnings))
     return "\n\n".join(lines)
 
 

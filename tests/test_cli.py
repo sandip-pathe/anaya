@@ -251,6 +251,54 @@ def test_scan_config_resolves_custom_pack_relative_to_config(tmp_path: Path):
     assert "CUSTOM-001" in result.output
 
 
+def test_scan_llm_enabled_without_openai_key_warns_and_skips(tmp_path: Path, monkeypatch):
+    monkeypatch.setenv("ANAYA_OPENAI_API_KEY", "")
+    runner = CliRunner()
+    pack_dir = tmp_path / "packs"
+    pack_dir.mkdir()
+    pack_path = pack_dir / "llm.yml"
+    config_path = tmp_path / "anaya.yml"
+    source_path = tmp_path / "service.py"
+
+    pack_path.write_text(
+        "\n".join(
+            [
+                "pack:",
+                '  id: "custom/llm"',
+                '  version: "1.0.0"',
+                '  name: "LLM"',
+                '  description: "Optional LLM rules"',
+                "rules:",
+                '  - id: "CUSTOM-LLM-001"',
+                '    name: "LLM Rule"',
+                '    description: "Optional LLM policy review."',
+                "    type: llm",
+                "    severity: HIGH",
+                "    languages: [python]",
+                "    llm:",
+                "      scope: file",
+                '      prompt: "Decide whether the code violates this policy."',
+                '    message: "LLM finding at line {line}."',
+                '    fix_hint: "Fix the policy issue."',
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    config_path.write_text(
+        "packs:\n  - packs/llm.yml\nllm:\n  enabled: true\n",
+        encoding="utf-8",
+    )
+    source_path.write_text("def transfer():\n    pass\n", encoding="utf-8")
+
+    result = runner.invoke(app, ["scan", str(source_path), "--config", str(config_path)])
+
+    assert result.exit_code == 0
+    assert "ANAYA_OPENAI_API_KEY" in result.output
+    assert "Rules checked: 0" in result.output
+    assert "No findings." in result.output
+
+
 def test_test_rule_runs_one_rule():
     runner = CliRunner()
 

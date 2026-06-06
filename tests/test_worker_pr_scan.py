@@ -126,3 +126,44 @@ async def test_pull_request_scanner_loads_custom_pack_from_base_ref():
 
     assert rule_ids == {"CUSTOM-001"}
     assert ("policies/custom.yml", "main") in github.content_requests
+
+
+@pytest.mark.asyncio
+async def test_pull_request_scanner_skips_llm_pack_without_openai_key():
+    config_text = (
+        "packs:\n"
+        "  - policies/custom.yml\n"
+        "llm:\n"
+        "  enabled: true\n"
+    )
+    custom_pack_text = "\n".join(
+        [
+            "pack:",
+            '  id: "custom/llm"',
+            '  version: "1.0.0"',
+            '  name: "LLM"',
+            '  description: "Optional LLM rules"',
+            "rules:",
+            '  - id: "CUSTOM-LLM-001"',
+            '    name: "LLM Rule"',
+            '    description: "Optional LLM policy review."',
+            "    type: llm",
+            "    severity: HIGH",
+            "    languages: [python]",
+            "    llm:",
+            "      scope: file",
+            '      prompt: "Decide whether the code violates this policy."',
+            '    message: "LLM finding at line {line}."',
+            '    fix_hint: "Fix the policy issue."',
+            "",
+        ]
+    )
+    github = FakeGitHub(config_text=config_text, custom_pack_text=custom_pack_text)
+    scanner = PullRequestScanner(github=github, settings=Settings(openai_api_key=None))
+
+    result = await scanner.scan_pull_request(_request())
+
+    assert result.summary.total_violations == 0
+    assert result.summary.rules_checked == 0
+    assert "ANAYA_OPENAI_API_KEY" in result.summary.warnings[0]
+    assert "ANAYA_OPENAI_API_KEY" in github.updated_check_runs[0]["payload"]["output"]["summary"]

@@ -13,6 +13,10 @@ ANAYA_GITHUB_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY
 ANAYA_GITHUB_WEBHOOK_SECRET=your-webhook-secret
 ANAYA_GITHUB_API_URL=https://api.github.com
 ANAYA_GITHUB_UPLOAD_SARIF=false
+
+# Optional OpenAI judge, used only when a repo's anaya.yml has llm.enabled: true
+ANAYA_OPENAI_API_KEY=your-openai-api-key
+ANAYA_OPENAI_MODEL=gpt-4o-mini
 ```
 
 You can use `ANAYA_GITHUB_PRIVATE_KEY_PATH` instead of
@@ -69,7 +73,8 @@ the API:
 4. Creates an in-progress Check Run named `Anaya Policy Scan`.
 5. Fetches changed PR files from the head SHA.
 6. Fetches `anaya.yml` and custom pack files from the base/default branch.
-7. Runs the shared Anaya engine.
+7. Runs the shared Anaya engine, including optional OpenAI rules only when
+   `llm.enabled: true` is set in the trusted config.
 8. Updates the Check Run with completed output and annotations.
 9. Uploads SARIF when `ANAYA_GITHUB_UPLOAD_SARIF=true`.
 10. Returns HTTP 202 before the background scan runs.

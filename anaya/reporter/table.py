@@ -19,6 +19,8 @@ def format_table(summary: ScanSummary) -> str:
         lines.append(f"Config: {summary.config_path}")
     if summary.skipped_files:
         lines.append("Skipped: " + ", ".join(f"{key}={value}" for key, value in summary.skipped_files.items()))
+    if summary.warnings:
+        lines.append("Warnings: " + "; ".join(summary.warnings))
     if summary.pack_versions:
         lines.append(
             "Pack versions: "

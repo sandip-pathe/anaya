@@ -39,6 +39,9 @@ The format follows Keep a Changelog, and this project uses semantic versioning o
 - GitHub PR file fetching, trusted base-branch config loading, and custom pack fetching.
 - Check Run completion updates with batched annotations.
 - Optional SARIF upload through GitHub Code Scanning API.
+- Optional OpenAI-backed `type: llm` rules with repository opt-in.
+- LLM judge prompt/schema modules, structured JSON decisions, warning-only failure handling, and mocked tests.
+- Scan warnings surfaced in table, audit JSON, PR comment, and Check Run outputs.
 
 ### Changed
 

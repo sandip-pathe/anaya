@@ -87,6 +87,8 @@ def _load_rule(raw_rule: Any, pack_id: str, pack_version: str, pack_path: Path) 
         patterns = tuple(_load_patterns(raw_rule, rule_id, pack_path))
     elif rule_type == "ast":
         _validate_ast_rule(raw_rule, rule_id, pack_path)
+    elif rule_type == "llm":
+        _validate_llm_rule(raw_rule, rule_id, pack_path)
     elif rule_type not in RULE_TYPES:
         raise RulePackError(f"{pack_path}: {rule_id} has unknown type {rule_type!r}")
 
@@ -182,6 +184,18 @@ def _validate_ast_rule(raw_rule: dict[str, Any], rule_id: str, pack_path: Path) 
 
     if raw_ast.get("if_missing") != "flag":
         raise RulePackError(f"{pack_path}: {rule_id} ast.if_missing must be 'flag'")
+
+
+def _validate_llm_rule(raw_rule: dict[str, Any], rule_id: str, pack_path: Path) -> None:
+    raw_llm = raw_rule.get("llm")
+    if not isinstance(raw_llm, dict):
+        raise RulePackError(f"{pack_path}: {rule_id} llm rule needs an llm mapping")
+
+    scope = _require_str(raw_llm, "scope", pack_path)
+    if scope not in {"file", "function"}:
+        raise RulePackError(f"{pack_path}: {rule_id} llm.scope must be 'file' or 'function'")
+
+    _require_str(raw_llm, "prompt", pack_path)
 
 
 def _compile_regex(regex: str, pack_path: Path, rule_id: str) -> None:

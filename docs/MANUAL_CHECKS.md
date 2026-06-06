@@ -92,3 +92,14 @@ Check:
 - Opening or updating a PR creates an in-progress Check Run.
 - The Check Run should complete after the background in-process scan finishes.
 - If `ANAYA_GITHUB_UPLOAD_SARIF=true`, SARIF should upload to Code Scanning when the app has permission.
+
+## 8. Optional OpenAI Judge No-Key Guard
+
+Create a temporary custom pack with a `type: llm` rule and an `anaya.yml` that
+sets `llm.enabled: true`, but leave `ANAYA_OPENAI_API_KEY` unset or empty.
+
+Check:
+
+- The scan should complete without findings from the LLM rule.
+- Output should include a warning that `ANAYA_OPENAI_API_KEY` is not set.
+- No live OpenAI request should be required for this guard check.

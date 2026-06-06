@@ -35,6 +35,11 @@ class IgnoreConfig:
 
 
 @dataclass(frozen=True)
+class LlmConfig:
+    enabled: bool = False
+
+
+@dataclass(frozen=True)
 class RepositoryConfig:
     version: str = "1"
     packs: tuple[str, ...] = DEFAULT_PACKS
@@ -42,6 +47,7 @@ class RepositoryConfig:
     languages: tuple[str, ...] = ()
     thresholds: ThresholdConfig = ThresholdConfig()
     ignore: IgnoreConfig = IgnoreConfig()
+    llm: LlmConfig = LlmConfig()
 
 
 class RepositoryConfigError(ValueError):
@@ -79,8 +85,10 @@ def load_repository_config(path: str | Path | None) -> RepositoryConfig:
     scan_raw = _mapping(raw.get("scan", {}), "scan", config_path)
     thresholds_raw = _mapping(raw.get("thresholds", {}), "thresholds", config_path)
     ignore_raw = _mapping(raw.get("ignore", {}), "ignore", config_path)
+    llm_raw = _mapping(raw.get("llm", {}), "llm", config_path)
     ignore_paths = _string_tuple(ignore_raw.get("paths", []), "ignore.paths", config_path)
     ignore_rules = _string_tuple(ignore_raw.get("rules", []), "ignore.rules", config_path)
+    llm_enabled = _bool(llm_raw.get("enabled", False), "llm.enabled", config_path)
 
     scan_mode = str(scan_raw.get("mode", "diff"))
     if scan_mode not in {"diff", "full"}:
@@ -123,6 +131,7 @@ def load_repository_config(path: str | Path | None) -> RepositoryConfig:
         languages=languages,
         thresholds=ThresholdConfig(fail_on=fail_on, warn_on=warn_on),
         ignore=IgnoreConfig(paths=ignore_paths, rules=ignore_rules),
+        llm=LlmConfig(enabled=llm_enabled),
     )
 
 
@@ -160,3 +169,9 @@ def _string_tuple(raw: Any, name: str, config_path: Path) -> tuple[str, ...]:
 def _validate_severity(value: str, name: str, config_path: Path) -> None:
     if value not in SEVERITY_ORDER:
         raise RepositoryConfigError(f"{config_path}: {name} has invalid severity {value!r}")
+
+
+def _bool(raw: Any, name: str, config_path: Path) -> bool:
+    if isinstance(raw, bool):
+        return raw
+    raise RepositoryConfigError(f"{config_path}: {name} must be a boolean")

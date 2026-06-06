@@ -38,4 +38,8 @@ def format_pr_comment(summary: ScanSummary) -> str:
     else:
         lines.extend(["", "No findings."])
 
+    if summary.warnings:
+        lines.extend(["", "### Warnings", ""])
+        lines.extend(f"- {warning}" for warning in summary.warnings)
+
     return "\n".join(lines)

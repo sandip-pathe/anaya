@@ -15,6 +15,7 @@ from anaya.engine.models import ScanSummary
 from anaya.engine.orchestrator import ScanOrchestrator, resolve_pack_identifier
 from anaya.engine.repo_config import RepositoryConfig, load_repository_config
 from anaya.engine.scanners.pattern import detect_language
+from anaya.llm.judge import create_openai_judge
 from anaya.reporter.check_run import build_check_run_payloads
 from anaya.reporter.sarif import format_sarif
 
@@ -168,7 +169,14 @@ class PullRequestScanner:
                 resolve_pack_identifier(pack_id, base_dir=temp_root)
                 for pack_id in config.packs
             ]
-            return config, ScanOrchestrator.from_pack_paths(pack_paths)
+            llm_judge, llm_warnings = (None, ())
+            if config.llm.enabled:
+                llm_judge, llm_warnings = create_openai_judge(self.settings)
+            return config, ScanOrchestrator.from_pack_paths(
+                pack_paths,
+                llm_judge=llm_judge,
+                llm_warnings=llm_warnings,
+            )
 
     async def _fetch_custom_pack_files(
         self,

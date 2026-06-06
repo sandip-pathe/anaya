@@ -120,3 +120,64 @@ def test_rule_pack_rejects_invalid_ast_schema(tmp_path: Path):
 
     with pytest.raises(RulePackError, match="ast.node_type"):
         load_rule_pack(pack_path)
+
+
+def test_rule_pack_accepts_llm_schema(tmp_path: Path):
+    pack_path = tmp_path / "llm.yml"
+    pack_path.write_text(
+        "\n".join(
+            [
+                "pack:",
+                '  id: "custom/llm"',
+                '  version: "1.0.0"',
+                "rules:",
+                '  - id: "CUSTOM-LLM-001"',
+                '    name: "LLM Review"',
+                '    description: "Optional LLM review."',
+                "    type: llm",
+                "    severity: HIGH",
+                "    languages: [python]",
+                "    llm:",
+                "      scope: file",
+                '      prompt: "Decide whether this file violates the policy."',
+                '    message: "LLM review at line {line}."',
+                '    fix_hint: "Fix the policy issue."',
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    pack = load_rule_pack(pack_path)
+
+    assert pack.rules[0].type == "llm"
+
+
+def test_rule_pack_rejects_invalid_llm_scope(tmp_path: Path):
+    pack_path = tmp_path / "bad-llm.yml"
+    pack_path.write_text(
+        "\n".join(
+            [
+                "pack:",
+                '  id: "custom/bad-llm"',
+                '  version: "1.0.0"',
+                "rules:",
+                '  - id: "CUSTOM-LLM-001"',
+                '    name: "Bad LLM"',
+                '    description: "Bad LLM."',
+                "    type: llm",
+                "    severity: HIGH",
+                "    languages: [python]",
+                "    llm:",
+                "      scope: line",
+                '      prompt: "Review line by line."',
+                '    message: "bad"',
+                '    fix_hint: "fix"',
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(RulePackError, match="llm.scope"):
+        load_rule_pack(pack_path)

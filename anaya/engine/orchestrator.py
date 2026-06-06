@@ -10,6 +10,7 @@ from anaya.engine.models import Rule, RulePack, ScanResult, ScanSummary, Violati
 from anaya.engine.rule_loader import load_rule_pack
 from anaya.engine.scanners.ast_scanner import AstScanner
 from anaya.engine.scanners.pattern import PatternScanner, detect_language, supported_source_file
+from anaya.llm.judge import LlmJudgeProtocol
 
 
 DEFAULT_IGNORES = (
@@ -28,15 +29,33 @@ MAX_FILE_SIZE_BYTES = 1_000_000
 class ScanOrchestrator:
     """Coordinate rule packs and scanners over one or more paths."""
 
-    def __init__(self, packs: list[RulePack]):
+    def __init__(
+        self,
+        packs: list[RulePack],
+        *,
+        llm_judge: LlmJudgeProtocol | None = None,
+        llm_warnings: tuple[str, ...] = (),
+    ):
         self.packs = packs
         self.rules = [rule for pack in packs for rule in pack.rules if rule.enabled]
         self.pattern_scanner = PatternScanner()
         self.ast_scanner = AstScanner()
+        self.llm_judge = llm_judge
+        self.llm_warnings = llm_warnings
 
     @classmethod
-    def from_pack_paths(cls, pack_paths: list[str | Path]) -> "ScanOrchestrator":
-        return cls([load_rule_pack(path) for path in pack_paths])
+    def from_pack_paths(
+        cls,
+        pack_paths: list[str | Path],
+        *,
+        llm_judge: LlmJudgeProtocol | None = None,
+        llm_warnings: tuple[str, ...] = (),
+    ) -> "ScanOrchestrator":
+        return cls(
+            [load_rule_pack(path) for path in pack_paths],
+            llm_judge=llm_judge,
+            llm_warnings=llm_warnings,
+        )
 
     def scan_paths(
         self,
@@ -56,10 +75,18 @@ class ScanOrchestrator:
         active_rules = self._active_rules(ignored_rule_ids, selected_languages)
 
         results: list[ScanResult] = []
+        warnings = list(self.llm_warnings)
         for file_path in files:
             file_started = perf_counter()
             content = file_path.read_text(encoding="utf-8", errors="replace")
-            results.append(self._scan_one(str(file_path), content, active_rules, file_started))
+            result, file_warnings = self._scan_one(
+                str(file_path),
+                content,
+                active_rules,
+                file_started,
+            )
+            results.append(result)
+            warnings.extend(file_warnings)
 
         scan_duration_ms = (perf_counter() - started) * 1000
         return self._summarize_results(
@@ -70,6 +97,7 @@ class ScanOrchestrator:
             rules_checked=len(active_rules),
             skipped_files=skipped_files,
             config_path=config_path,
+            warnings=tuple(_dedupe_strings(warnings)),
         )
 
     def scan_contents(
@@ -91,6 +119,7 @@ class ScanOrchestrator:
         skipped_files = {"unsupported": 0, "language_filtered": 0}
 
         results: list[ScanResult] = []
+        warnings = list(self.llm_warnings)
         for file_path, content in files:
             language = detect_language(file_path)
             if language is None:
@@ -100,7 +129,9 @@ class ScanOrchestrator:
                 skipped_files["language_filtered"] += 1
                 continue
             file_started = perf_counter()
-            results.append(self._scan_one(file_path, content, active_rules, file_started))
+            result, file_warnings = self._scan_one(file_path, content, active_rules, file_started)
+            results.append(result)
+            warnings.extend(file_warnings)
 
         scan_duration_ms = (perf_counter() - started) * 1000
         return self._summarize_results(
@@ -111,13 +142,16 @@ class ScanOrchestrator:
             rules_checked=len(active_rules),
             skipped_files={key: value for key, value in skipped_files.items() if value},
             config_path=config_path,
+            warnings=tuple(_dedupe_strings(warnings)),
         )
 
     def _active_rules(self, ignored_rule_ids: set[str], selected_languages: set[str]) -> list[Rule]:
         return [
             rule
             for rule in self.rules
-            if rule.id not in ignored_rule_ids and _rule_matches_selected_languages(rule, selected_languages)
+            if rule.id not in ignored_rule_ids
+            and (rule.type != "llm" or self.llm_judge is not None)
+            and _rule_matches_selected_languages(rule, selected_languages)
         ]
 
     def _scan_one(
@@ -126,17 +160,25 @@ class ScanOrchestrator:
         content: str,
         active_rules: list[Rule],
         file_started: float,
-    ) -> ScanResult:
+    ) -> tuple[ScanResult, list[str]]:
         violations = [
             *self.pattern_scanner.scan_file_content(file_path, content, active_rules),
             *self.ast_scanner.scan_file_content(file_path, content, active_rules),
         ]
+        warnings: list[str] = []
+        if self.llm_judge is not None:
+            outcome = self.llm_judge.scan_file_content(file_path, content, active_rules)
+            violations.extend(outcome.violations)
+            warnings.extend(outcome.warnings)
         elapsed_ms = (perf_counter() - file_started) * 1000
-        return ScanResult(
-            file_path=file_path,
-            violations=tuple(violations),
-            rules_checked=len(active_rules),
-            scan_duration_ms=elapsed_ms,
+        return (
+            ScanResult(
+                file_path=file_path,
+                violations=tuple(sorted(violations, key=lambda item: (item.line_number, item.rule_id))),
+                rules_checked=len(active_rules),
+                scan_duration_ms=elapsed_ms,
+            ),
+            warnings,
         )
 
     def _summarize_results(
@@ -149,6 +191,7 @@ class ScanOrchestrator:
         rules_checked: int,
         skipped_files: dict[str, int],
         config_path: str | None,
+        warnings: tuple[str, ...],
     ) -> ScanSummary:
         all_violations = [violation for result in results for violation in result.violations]
         return _summarize(
@@ -161,6 +204,7 @@ class ScanOrchestrator:
             skipped_files=skipped_files,
             pack_versions={pack.id: pack.version for pack in self.packs},
             config_path=config_path,
+            warnings=warnings,
         )
 
 
@@ -283,6 +327,7 @@ def _summarize(
     skipped_files: dict[str, int],
     pack_versions: dict[str, str],
     config_path: str | None,
+    warnings: tuple[str, ...],
 ) -> ScanSummary:
     by_severity = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0}
     by_pack: dict[str, dict[str, int | str]] = {}
@@ -317,4 +362,9 @@ def _summarize(
         skipped_files=skipped_files,
         pack_versions=pack_versions,
         config_path=config_path,
+        warnings=warnings,
     )
+
+
+def _dedupe_strings(values: list[str]) -> list[str]:
+    return list(dict.fromkeys(value for value in values if value))

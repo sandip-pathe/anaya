@@ -16,6 +16,7 @@ This folder is the clean Anaya foundation. The older `rbi-compliance-scanner` fo
 - Ship five generic OSS packs for secrets, OWASP, PII handling, TLS, and audit logging
 - Cover 29 built-in rules with Python and JavaScript fixture tests
 - Provide a FastAPI GitHub App foundation with webhook verification, PR scanning, Check Run updates, and optional SARIF upload
+- Support optional OpenAI-backed `type: llm` rules, disabled by default and guarded by repository opt-in
 
 ## Quick Start
 
@@ -77,9 +78,19 @@ ignore:
 
 Configured packs, thresholds, languages, and ignored rule IDs are validated before scanning.
 
+Optional OpenAI-backed rules require explicit repository opt-in:
+
+```yaml
+llm:
+  enabled: true
+```
+
+LLM rules are skipped with a warning when OpenAI is not configured. See
+`docs/LLM_RULES.md` for the rule schema, safety limits, and data-handling notes.
+
 ## Status
 
-This is the Phase 1/Phase 3/Phase 4/Phase 5 foundation from `ANAYA_SPEC.py`: engine models, rule loader, pattern and Python AST scanners, repository config, reporters, tested generic packs, OSS CLI, and in-process GitHub App PR scanning. Redis/Celery hosted queueing, retry hardening, JavaScript AST scanning, and OpenAI-based optional LLM fallback are intentionally not wired yet.
+This is the Phase 1/Phase 3/Phase 4/Phase 5 foundation from `ANAYA_SPEC.py`: engine models, rule loader, pattern and Python AST scanners, repository config, reporters, tested generic packs, OSS CLI, in-process GitHub App PR scanning, and optional OpenAI-backed LLM judging. Redis/Celery hosted queueing, retry hardening, JavaScript AST scanning, and deployment/demo readiness are intentionally not wired yet.
 
 ## Development
 
@@ -95,3 +106,4 @@ The same commands are wrapped in the repository `Makefile` for contributors who 
 For human product checks after automated tests pass, see `docs/MANUAL_CHECKS.md`.
 For GitHub Actions SARIF upload, see `docs/GITHUB_ACTION.md`.
 For local GitHub App API setup, see `docs/GITHUB_APP.md`.
+For optional OpenAI-backed rules, see `docs/LLM_RULES.md`.
