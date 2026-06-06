@@ -477,6 +477,15 @@ Acceptance:
 
 Goal: create the hosted GitHub App surface using the shared engine.
 
+Status:
+
+- FastAPI app factory exists in `anaya/api/app.py`.
+- `/health` returns service health.
+- `/webhook` verifies `X-Hub-Signature-256`.
+- Pull request `opened`, `reopened`, and `synchronize` events create an in-progress Check Run and enqueue a placeholder scan request.
+- GitHub client supports App JWTs, installation access tokens, Check Run creation, PR file listing, and repository content fetching.
+- Remaining later work: real worker dispatch, scan execution, Check Run completion, and SARIF upload.
+
 Tasks:
 
 - Add dependencies:
@@ -780,23 +789,24 @@ Recommendation:
 
 Next 10 concrete tasks:
 
-1. Run live GitHub Code Scanning SARIF upload check.
-2. Add Rich table rendering while preserving `--no-color`.
-3. Decide output overwrite policy.
-4. Add JavaScript/TypeScript AST support.
-5. Add TypeScript fixture matrix.
-6. Run false-positive review on `fintech-demo` and capture findings.
-7. Add FastAPI app and health endpoint.
-8. Port webhook signature verification.
-9. Port GitHub App JWT/token logic with `httpx`.
-10. Implement Check Runs API client using the new reporter payloads.
+1. Add worker interface and local in-process worker implementation.
+2. Fetch PR files and head contents through the GitHub client.
+3. Run the shared engine against fetched PR files.
+4. Update Check Runs with completed output and annotations.
+5. Add SARIF upload support.
+6. Add retry/backoff behavior for GitHub 401, 429, and 5xx responses.
+7. Add Docker Compose with Redis for hosted mode.
+8. Run live GitHub Code Scanning SARIF upload check.
+9. Add Rich table rendering while preserving `--no-color`.
+10. Add JavaScript/TypeScript AST support.
 
 After that:
 
-11. Implement Celery worker and Redis token cache.
-12. End-to-end GitHub App test on a demo repo.
-13. Add optional OpenAI judge.
-14. Prepare deployment/demo docs.
+11. Add TypeScript fixture matrix.
+12. Run false-positive review on `fintech-demo` and capture findings.
+13. End-to-end GitHub App test on a demo repo.
+14. Add optional OpenAI judge.
+15. Prepare deployment/demo docs.
 
 ## 13. V1 Definition Of Done
 

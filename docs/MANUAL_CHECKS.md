@@ -73,3 +73,21 @@ Check:
 - The workflow uploads `anaya.sarif`.
 - Findings appear in Code Scanning.
 - The category/automation ID is shown as Anaya rather than colliding with other tools.
+
+## 7. GitHub App Webhook
+
+Run the API locally:
+
+```bash
+uvicorn anaya.api.app:app --host 0.0.0.0 --port 3000
+```
+
+Use a tunnel such as ngrok and configure the GitHub App webhook URL as
+`https://YOUR-TUNNEL/webhook`.
+
+Check:
+
+- `GET /health` returns `{"status":"ok","service":"anaya"}`.
+- Invalid webhook signatures return 403.
+- Opening or updating a PR creates an in-progress Check Run.
+- The Check Run will remain in progress until the worker milestone lands.

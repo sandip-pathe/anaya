@@ -30,12 +30,18 @@ The format follows Keep a Changelog, and this project uses semantic versioning o
 - Python AST scanner for function-level missing-call rules.
 - Structural audit rules for missing transaction, authentication, and deletion audit calls.
 - GitHub Actions SARIF upload guide.
+- FastAPI GitHub App foundation with health and webhook endpoints.
+- GitHub webhook HMAC-SHA256 signature verification.
+- GitHub App JWT, installation token, Check Run, PR file list, and content-fetch client helpers.
+- Pull request webhook handling for opened, reopened, and synchronize events.
+- GitHub App local setup documentation.
 
 ### Changed
 
 - Anaya product direction locked to OpenAI for future optional LLM support.
 - Starter `anaya.yml` now includes all default OSS generic packs.
 - Generic audit logging pack now includes both explicit-bypass pattern rules and Python structural rules.
+- Runtime settings support raw `ANAYA_GITHUB_PRIVATE_KEY` as well as private-key file paths.
 
 ### Security
 
