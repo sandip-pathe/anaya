@@ -2,7 +2,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from cli.main import app
+from anaya.cli.main import app
 
 
 def test_scan_output_creates_parent_directory(tmp_path: Path):
@@ -56,3 +56,40 @@ def test_scan_uses_config_ignores(tmp_path: Path):
 
     assert result.exit_code == 0
     assert "0 violation(s)" in result.output
+
+
+def test_init_validate_and_list_commands(tmp_path: Path):
+    runner = CliRunner()
+    config_path = tmp_path / "anaya.yml"
+
+    init_result = runner.invoke(app, ["init", "--path", str(config_path)])
+    validate_result = runner.invoke(
+        app,
+        ["validate-pack", "anaya/packs/generic/secrets-detection.yml"],
+    )
+    list_result = runner.invoke(app, ["packs", "list"])
+
+    assert init_result.exit_code == 0
+    assert config_path.exists()
+    assert validate_result.exit_code == 0
+    assert "is valid" in validate_result.output
+    assert list_result.exit_code == 0
+    assert "generic/secrets-detection" in list_result.output
+
+
+def test_scan_rejects_unknown_format():
+    runner = CliRunner()
+
+    result = runner.invoke(
+        app,
+        [
+            "scan",
+            "tests/fixtures/python/clean/proper_secrets.py",
+            "--no-config",
+            "--format",
+            "xml",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "format must be one of" in result.output

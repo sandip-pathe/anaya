@@ -20,13 +20,13 @@ This folder is the clean Anaya foundation. The older `rbi-compliance-scanner` fo
 ```bash
 python -m venv .venv
 .\.venv\Scripts\python -m pip install -e .[dev]
-anaya scan ..\fintech-demo --format table
+anaya scan . --no-config --format table
 ```
 
 Without installing the console script:
 
 ```bash
-python -m cli.main scan ..\fintech-demo --format json
+python -m anaya.cli.main scan . --no-config --format json
 ```
 
 ## Commands
@@ -52,3 +52,14 @@ Use `--config path\to\anaya.yml` to choose a specific config file.
 ## Status
 
 This is the Phase 1/Phase 3 skeleton from `ANAYA_SPEC.py`: engine models, rule loader, pattern scanner, repository config, reporters, initial generic packs, and OSS CLI. GitHub App, Check Runs, async workers, AST scanning, and OpenAI-based optional LLM fallback are intentionally not wired yet.
+
+## Development
+
+```bash
+python -m pip install -e .[dev]
+python -m pytest
+python -m pytest --cov
+python -m ruff check .
+```
+
+The same commands are wrapped in the repository `Makefile` for contributors who have `make` installed.

@@ -10,6 +10,7 @@ requires-python = ">=3.11"
 readme = "README.md"
 license = { text = "MIT" }
 dependencies = [
+  "pydantic-settings>=2.5.0",
   "PyYAML>=6.0",
   "typer>=0.12.0",
   "rich>=13.9.0",
@@ -21,15 +22,16 @@ llm = [
 ]
 dev = [
   "pytest>=8.0",
+  "pytest-cov>=5.0",
   "ruff>=0.7.0",
 ]
 
 [project.scripts]
-anaya = "cli.main:app"
+anaya = "anaya.cli.main:app"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["anaya*", "cli*"]
+include = ["anaya*"]
 
 [tool.setuptools.package-data]
 anaya = ["packs/**/*.yml"]
@@ -37,3 +39,16 @@ anaya = ["packs/**/*.yml"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+branch = true
+source = ["anaya"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = true
