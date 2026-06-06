@@ -36,6 +36,8 @@ python -m anaya.cli.main scan . --no-config --format json
 anaya scan PATH
 anaya scan PATH --diff HEAD~1
 anaya scan PATH --format sarif -o anaya.sarif
+anaya scan PATH --format audit-json
+anaya scan PATH --format check-run
 anaya test-rule --rule ANAYA-SEC-001 --file app.py
 anaya init
 anaya validate-pack anaya\packs\generic\secrets-detection.yml
@@ -90,3 +92,4 @@ python -m ruff check .
 The same commands are wrapped in the repository `Makefile` for contributors who have `make` installed.
 
 For human product checks after automated tests pass, see `docs/MANUAL_CHECKS.md`.
+For GitHub Actions SARIF upload, see `docs/GITHUB_ACTION.md`.

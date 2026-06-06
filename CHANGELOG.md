@@ -25,11 +25,17 @@ The format follows Keep a Changelog, and this project uses semantic versioning o
 - Python and JavaScript dirty/clean fixture matrix with exact expected rule ID tests.
 - Table output metadata for config path, pack versions, skipped files, and no-finding scans.
 - JSON and SARIF reporter contract tests.
+- Audit JSON, GitHub Check Run, and PR comment reporters.
+- SARIF automation details, invocation metadata, stable fingerprints, and schema contract validation.
+- Python AST scanner for function-level missing-call rules.
+- Structural audit rules for missing transaction, authentication, and deletion audit calls.
+- GitHub Actions SARIF upload guide.
 
 ### Changed
 
 - Anaya product direction locked to OpenAI for future optional LLM support.
 - Starter `anaya.yml` now includes all default OSS generic packs.
+- Generic audit logging pack now includes both explicit-bypass pattern rules and Python structural rules.
 
 ### Security
 

@@ -89,3 +89,34 @@ def test_rule_pack_rejects_non_semver_version(tmp_path: Path):
 
     with pytest.raises(RulePackError, match="SemVer"):
         load_rule_pack(pack_path)
+
+
+def test_rule_pack_rejects_invalid_ast_schema(tmp_path: Path):
+    pack_path = tmp_path / "bad-ast.yml"
+    pack_path.write_text(
+        "\n".join(
+            [
+                "pack:",
+                '  id: "custom/bad-ast"',
+                '  version: "1.0.0"',
+                "rules:",
+                '  - id: "CUSTOM-AST-001"',
+                '    name: "Bad AST"',
+                '    description: "Bad AST"',
+                "    type: ast",
+                "    severity: HIGH",
+                "    languages: [python]",
+                "    ast:",
+                "      node_type: class",
+                "      name_matches: transfer",
+                "      must_contain: [audit]",
+                "      if_missing: flag",
+                '    message: "missing audit"',
+                '    fix_hint: "add audit"',
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(RulePackError, match="ast.node_type"):
+        load_rule_pack(pack_path)

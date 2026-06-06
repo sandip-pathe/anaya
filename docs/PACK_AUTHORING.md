@@ -62,11 +62,27 @@ rules:
 Current:
 
 - `pattern`: deterministic regex rules.
+- `ast`: structural Python rules for function-level missing-call checks.
 
 Planned:
 
-- `ast`: structural rules, for example "transaction functions must call audit logging."
 - `llm`: optional OpenAI-backed fallback rules, disabled by default and never required for OSS use.
+
+AST rules currently support this shape:
+
+```yaml
+type: ast
+languages: [python]
+ast:
+  node_type: function
+  name_matches: "(transfer|debit|credit)"
+  must_contain:
+    - "(audit|record_audit|emit_audit)"
+  if_missing: flag
+```
+
+The rule flags a matching top-level Python function when no call in the function
+body matches any `must_contain` pattern.
 
 ## Design Rules
 

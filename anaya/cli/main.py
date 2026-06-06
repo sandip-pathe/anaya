@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Optional
 
@@ -22,7 +23,10 @@ from anaya.engine.repo_config import (
     load_repository_config,
 )
 from anaya.engine.rule_loader import RulePackError, load_rule_pack, validate_rule_pack
+from anaya.reporter.audit_json import format_audit_json
+from anaya.reporter.check_run import build_check_run_payloads
 from anaya.reporter.json_report import format_json
+from anaya.reporter.pr_comment import format_pr_comment
 from anaya.reporter.sarif import format_sarif
 from anaya.reporter.table import format_table
 
@@ -51,7 +55,7 @@ def scan(
         "table",
         "--format",
         "-f",
-        help="Output format: table, json, or sarif.",
+        help="Output format: table, json, sarif, audit-json, check-run, or pr-comment.",
     ),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Write output to a file."),
     diff: Optional[str] = typer.Option(None, "--diff", help="Scan files changed since REF."),
@@ -110,7 +114,7 @@ def test_rule(
         "table",
         "--format",
         "-f",
-        help="Output format: table, json, or sarif.",
+        help="Output format: table, json, sarif, audit-json, check-run, or pr-comment.",
     ),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Write output to a file."),
     fail_on: Optional[str] = typer.Option(None, "--fail-on", help="Minimum severity that fails."),
@@ -229,7 +233,13 @@ def _render(summary, output_format: str) -> str:
         return format_json(summary)
     if normalized == "sarif":
         return format_sarif(summary)
-    raise typer.BadParameter("format must be one of: table, json, sarif")
+    if normalized == "audit-json":
+        return format_audit_json(summary)
+    if normalized == "check-run":
+        return json.dumps(build_check_run_payloads(summary), indent=2, ensure_ascii=False)
+    if normalized == "pr-comment":
+        return format_pr_comment(summary)
+    raise typer.BadParameter("format must be one of: table, json, sarif, audit-json, check-run, pr-comment")
 
 
 if __name__ == "__main__":

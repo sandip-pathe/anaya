@@ -98,6 +98,48 @@ def test_scan_rejects_unknown_format():
     assert "format must be one of" in result.output
 
 
+def test_scan_supports_machine_readable_m5_formats():
+    runner = CliRunner()
+
+    audit_result = runner.invoke(
+        app,
+        [
+            "scan",
+            "tests/fixtures/python/dirty/hardcoded_secret.py",
+            "--no-config",
+            "--format",
+            "audit-json",
+        ],
+    )
+    check_result = runner.invoke(
+        app,
+        [
+            "scan",
+            "tests/fixtures/python/dirty/hardcoded_secret.py",
+            "--no-config",
+            "--format",
+            "check-run",
+        ],
+    )
+    comment_result = runner.invoke(
+        app,
+        [
+            "scan",
+            "tests/fixtures/python/dirty/hardcoded_secret.py",
+            "--no-config",
+            "--format",
+            "pr-comment",
+        ],
+    )
+
+    assert audit_result.exit_code == 1
+    assert '"tool": {' in audit_result.output
+    assert check_result.exit_code == 1
+    assert '"annotations": [' in check_result.output
+    assert comment_result.exit_code == 1
+    assert "## Anaya Policy Scan" in comment_result.output
+
+
 def test_scan_pass_exit_code_and_no_findings_output():
     runner = CliRunner()
 

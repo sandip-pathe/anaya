@@ -8,6 +8,7 @@ from time import perf_counter
 
 from anaya.engine.models import Rule, RulePack, ScanResult, ScanSummary, Violation, severity_at_least
 from anaya.engine.rule_loader import load_rule_pack
+from anaya.engine.scanners.ast_scanner import AstScanner
 from anaya.engine.scanners.pattern import PatternScanner, detect_language, supported_source_file
 
 
@@ -31,6 +32,7 @@ class ScanOrchestrator:
         self.packs = packs
         self.rules = [rule for pack in packs for rule in pack.rules if rule.enabled]
         self.pattern_scanner = PatternScanner()
+        self.ast_scanner = AstScanner()
 
     @classmethod
     def from_pack_paths(cls, pack_paths: list[str | Path]) -> "ScanOrchestrator":
@@ -61,11 +63,10 @@ class ScanOrchestrator:
         for file_path in files:
             file_started = perf_counter()
             content = file_path.read_text(encoding="utf-8", errors="replace")
-            violations = self.pattern_scanner.scan_file_content(
-                str(file_path),
-                content,
-                active_rules,
-            )
+            violations = [
+                *self.pattern_scanner.scan_file_content(str(file_path), content, active_rules),
+                *self.ast_scanner.scan_file_content(str(file_path), content, active_rules),
+            ]
             elapsed_ms = (perf_counter() - file_started) * 1000
             results.append(
                 ScanResult(

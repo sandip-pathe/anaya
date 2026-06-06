@@ -50,3 +50,26 @@ Check:
 
 - The file should be created.
 - Open it briefly and confirm it is JSON with `version` set to `2.1.0`.
+
+## 5. AST Audit Rules
+
+```bash
+anaya scan tests\fixtures\python\dirty\missing_audit.py --no-config --format table
+anaya scan tests\fixtures\python\clean\audited_flows.py --no-config --format table
+```
+
+Check:
+
+- The dirty scan should report three audit findings.
+- The clean scan should pass with `No findings.`
+
+## 6. GitHub Code Scanning Upload
+
+Use `docs/GITHUB_ACTION.md` in a test repository with GitHub Code Scanning
+enabled.
+
+Check:
+
+- The workflow uploads `anaya.sarif`.
+- Findings appear in Code Scanning.
+- The category/automation ID is shown as Anaya rather than colliding with other tools.

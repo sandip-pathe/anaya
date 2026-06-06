@@ -25,11 +25,17 @@ def validate_url(next_url, allowed_hosts):
 
 
 def transfer_money(amount, **kwargs):
+    audit_log("transfer")
     return amount, kwargs
 
 
 def login_user(username, **kwargs):
+    audit_log("login")
     return username, kwargs
+
+
+def audit_log(event):
+    return event
 
 
 logger = Logger()

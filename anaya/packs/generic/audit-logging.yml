@@ -60,3 +60,63 @@ rules:
         title: "OWASP Logging Cheat Sheet"
     tags: ["audit", "authentication"]
     enabled: true
+
+  - id: "ANAYA-AUDIT-004"
+    name: "Transaction Function Missing Audit Call"
+    description: "Financial transaction functions should emit an audit event."
+    type: ast
+    severity: HIGH
+    languages: [python]
+    ast:
+      node_type: function
+      name_matches: "(transfer|debit|credit|refund|payout|disburse)"
+      must_contain:
+        - "(audit|audit_log|record_audit|emit_audit|log_audit)"
+      if_missing: flag
+    message: "Transaction-like function {function} does not call audit logging at line {line}."
+    fix_hint: "Emit an immutable audit event for transaction attempts and outcomes."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+        title: "OWASP Logging Cheat Sheet"
+    tags: ["audit", "transactions", "ast"]
+    enabled: true
+
+  - id: "ANAYA-AUDIT-005"
+    name: "Authentication Function Missing Audit Call"
+    description: "Authentication functions should emit audit events for sensitive auth activity."
+    type: ast
+    severity: HIGH
+    languages: [python]
+    ast:
+      node_type: function
+      name_matches: "(login|authenticate|verify_otp|reset_password)"
+      must_contain:
+        - "(audit|audit_log|record_audit|emit_audit|log_audit)"
+      if_missing: flag
+    message: "Authentication-like function {function} does not call audit logging at line {line}."
+    fix_hint: "Record authentication attempts, failures, and sensitive account events."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+        title: "OWASP Logging Cheat Sheet"
+    tags: ["audit", "authentication", "ast"]
+    enabled: true
+
+  - id: "ANAYA-AUDIT-006"
+    name: "Deletion Function Missing Audit Call"
+    description: "Destructive deletion functions should emit an audit event."
+    type: ast
+    severity: HIGH
+    languages: [python]
+    ast:
+      node_type: function
+      name_matches: "(delete|remove|purge|destroy)"
+      must_contain:
+        - "(audit|audit_log|record_audit|emit_audit|log_audit)"
+      if_missing: flag
+    message: "Deletion-like function {function} does not call audit logging at line {line}."
+    fix_hint: "Record who requested the deletion, what was deleted, and the outcome."
+    references:
+      - url: "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+        title: "OWASP Logging Cheat Sheet"
+    tags: ["audit", "deletion", "ast"]
+    enabled: true

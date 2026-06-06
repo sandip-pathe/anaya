@@ -85,6 +85,8 @@ def _load_rule(raw_rule: Any, pack_id: str, pack_version: str, pack_path: Path) 
     patterns = ()
     if rule_type == "pattern":
         patterns = tuple(_load_patterns(raw_rule, rule_id, pack_path))
+    elif rule_type == "ast":
+        _validate_ast_rule(raw_rule, rule_id, pack_path)
     elif rule_type not in RULE_TYPES:
         raise RulePackError(f"{pack_path}: {rule_id} has unknown type {rule_type!r}")
 
@@ -156,6 +158,30 @@ def _load_references(raw_refs: Any, rule_id: str, pack_path: Path) -> list[dict[
             raise RulePackError(f"{pack_path}: {rule_id} references need url and title")
         refs.append({str(key): str(value) for key, value in ref.items()})
     return refs
+
+
+def _validate_ast_rule(raw_rule: dict[str, Any], rule_id: str, pack_path: Path) -> None:
+    raw_ast = raw_rule.get("ast")
+    if not isinstance(raw_ast, dict):
+        raise RulePackError(f"{pack_path}: {rule_id} ast rule needs an ast mapping")
+
+    node_type = _require_str(raw_ast, "node_type", pack_path)
+    if node_type != "function":
+        raise RulePackError(f"{pack_path}: {rule_id} ast.node_type must be 'function'")
+
+    name_matches = _require_str(raw_ast, "name_matches", pack_path)
+    _compile_regex(name_matches, pack_path, rule_id)
+
+    must_contain = raw_ast.get("must_contain", [])
+    if not isinstance(must_contain, list) or not all(isinstance(item, str) for item in must_contain):
+        raise RulePackError(f"{pack_path}: {rule_id} ast.must_contain must be a string list")
+    if not must_contain:
+        raise RulePackError(f"{pack_path}: {rule_id} ast.must_contain must not be empty")
+    for pattern in must_contain:
+        _compile_regex(pattern, pack_path, rule_id)
+
+    if raw_ast.get("if_missing") != "flag":
+        raise RulePackError(f"{pack_path}: {rule_id} ast.if_missing must be 'flag'")
 
 
 def _compile_regex(regex: str, pack_path: Path, rule_id: str) -> None:

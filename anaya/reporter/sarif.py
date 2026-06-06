@@ -17,7 +17,7 @@ SEVERITY_TO_SARIF_LEVEL = {
 }
 
 
-def format_sarif(summary: ScanSummary) -> str:
+def format_sarif(summary: ScanSummary, *, automation_id: str = "anaya/default") -> str:
     """Format results as SARIF 2.1.0 JSON."""
 
     rules_by_id = {}
@@ -46,6 +46,16 @@ def format_sarif(summary: ScanSummary) -> str:
                     "ruleId": violation.rule_id,
                     "level": SEVERITY_TO_SARIF_LEVEL.get(violation.severity, "warning"),
                     "message": {"text": violation.message},
+                    "partialFingerprints": {
+                        "anaya/v1": "|".join(
+                            [
+                                violation.rule_id,
+                                Path(violation.file_path).as_posix(),
+                                str(violation.line_number),
+                                violation.snippet.strip(),
+                            ]
+                        )
+                    },
                     "locations": [
                         {
                             "physicalLocation": {
@@ -65,6 +75,7 @@ def format_sarif(summary: ScanSummary) -> str:
         "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
         "runs": [
             {
+                "automationDetails": {"id": automation_id},
                 "tool": {
                     "driver": {
                         "name": "Anaya",
@@ -73,6 +84,8 @@ def format_sarif(summary: ScanSummary) -> str:
                         "rules": list(rules_by_id.values()),
                     }
                 },
+                "invocations": [{"executionSuccessful": True}],
+                "columnKind": "utf16CodeUnits",
                 "results": results,
             }
         ],

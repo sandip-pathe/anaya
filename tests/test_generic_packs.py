@@ -51,7 +51,7 @@ def test_default_generic_packs_load():
     packs = _load_default_packs()
 
     assert len(packs) == 5
-    assert sum(len(pack.rules) for pack in packs) == 26
+    assert sum(len(pack.rules) for pack in packs) == 29
 
 
 def test_appsec_and_pii_fixture_triggers_multiple_packs():
@@ -98,6 +98,7 @@ def test_dirty_fixture_matrix_matches_expected_rule_ids(
     "fixture",
     [
         Path("tests/fixtures/python/clean/security_matrix.py"),
+        Path("tests/fixtures/python/clean/audited_flows.py"),
         Path("tests/fixtures/javascript/clean/security_matrix.js"),
         Path("tests/fixtures/python/edge/suppressions.py"),
     ],

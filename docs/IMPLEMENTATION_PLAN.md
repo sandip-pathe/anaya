@@ -90,22 +90,23 @@ Already implemented:
   - `generic/pii-handling`
   - `generic/tls-encryption`
 - `generic/audit-logging`
-- 26 deterministic built-in rules
+- 29 deterministic built-in rules
 - Python and JavaScript dirty/clean fixture matrix
 - `anaya test-rule --rule RULE_ID --file FILE`
+- Audit JSON, GitHub Check Run, PR comment, and SARIF reporters
+- Python AST scanner for function-level missing-call rules
 - Tests passing and Ruff clean
 
 Known gaps:
 
-- No AST scanner yet
-- Audit logging pack is pattern-based; structural missing-audit detection waits for AST scanner
-- SARIF has contract tests but still needs full schema validation
+- JavaScript AST scanner is not implemented yet
+- SARIF has schema contract tests but still needs live GitHub Code Scanning upload verification
 - Table output is plain text with metadata, not Rich-polished
 - Diff-file scanning exists; changed-line-aware annotations are still future work
 - No GitHub App in the new app
 - No FastAPI, Celery, Redis, or Docker yet
 - No GitHub Check Runs API
-- No GitHub Code Scanning SARIF upload
+- No hosted GitHub Code Scanning SARIF upload flow yet
 - No LLM fallback module
 - No OpenAI integration module yet
 
@@ -273,8 +274,8 @@ Current pack status:
 - OWASP: 8 rules
 - PII: 5 rules
 - TLS: 4 rules
-- Audit logging: 3 pattern rules
-- Total: 26 rules
+- Audit logging: 3 pattern rules and 3 Python AST rules
+- Total: 29 rules
 
 Combined M3/M4 pass status:
 
@@ -282,7 +283,7 @@ Combined M3/M4 pass status:
 - Dirty Python and JavaScript matrix fixtures assert exact expected rule IDs.
 - Clean Python and JavaScript fixtures pass.
 - Suppression edge fixture passes.
-- Remaining later upgrade: replace audit logging heuristics with AST-based missing-audit detection in M6.
+- Remaining later upgrade: add JavaScript AST coverage for missing-audit detection.
 
 Tasks:
 
@@ -306,10 +307,13 @@ Tasks:
   - insecure HTTP URL
   - weak TLS versions
   - database SSL disabled/missing
-- Add `generic/audit-logging.yml` with 3 deterministic pattern rules now:
+- Add `generic/audit-logging.yml` with deterministic pattern and Python AST rules:
   - audit logging disabled
   - transaction audit bypass
   - authentication audit bypass
+  - transaction function missing audit call
+  - authentication function missing audit call
+  - deletion function missing audit call
 - Add Python fixtures:
   - dirty and clean per rule
   - edge cases per rule
@@ -385,6 +389,14 @@ Acceptance:
 
 Goal: make outputs suitable for GitHub and enterprise workflows.
 
+Status:
+
+- SARIF includes tool/rule metadata, help URIs, regions, normalized paths, automation details, invocation metadata, and stable partial fingerprints.
+- SARIF has a local schema contract test; live GitHub upload remains a manual/integration check.
+- Check Run payload reporter exists with severity mapping and 50-annotation batching.
+- PR summary comment reporter exists as optional markdown.
+- Audit JSON reporter exists with scan metadata, pack versions, summary, and violations.
+
 Tasks:
 
 - SARIF 2.1.0:
@@ -410,12 +422,12 @@ Tasks:
   - rules applied
   - violations
   - versions
-  - timestamps
+  - deterministic export metadata
   - suitable later for paid exports
 
 Acceptance:
 
-- SARIF uploads cleanly to GitHub Code Scanning.
+- SARIF validates locally; upload to GitHub Code Scanning remains a manual integration check.
 - Check Run payloads are unit-tested.
 - Large result sets batch correctly.
 
@@ -423,9 +435,17 @@ Acceptance:
 
 Goal: support structural rules that regex cannot express.
 
+Status:
+
+- Python AST scanner exists using the standard library `ast` module.
+- AST rule schema supports function `node_type`, `name_matches`, `must_contain`, and `if_missing: flag`.
+- Orchestrator routes pattern and AST rules through the same summary/reporting path.
+- Audit logging pack includes Python structural rules for transaction, authentication, and deletion flows.
+- Remaining later slice: JavaScript/TypeScript AST support.
+
 Tasks:
 
-- Add tree-sitter dependencies:
+- Add tree-sitter dependencies when JavaScript/TypeScript structural parsing is implemented:
   - `tree-sitter`
   - `tree-sitter-python`
   - `tree-sitter-javascript`
@@ -435,7 +455,7 @@ Tasks:
   - `name_matches`
   - `must_contain`
   - `if_missing: flag`
-- Support Python and JavaScript first.
+- Support Python first; JavaScript/TypeScript next.
 - Route rules by type in orchestrator:
   - pattern rules to PatternScanner
   - ast rules to AstScanner
@@ -449,7 +469,7 @@ Tasks:
 
 Acceptance:
 
-- Detects missing audit logging in Python and JavaScript.
+- Detects missing audit logging in Python.
 - Clean structural fixtures pass.
 - AST parse errors are reported as warnings/skips, not crashes.
 
@@ -760,25 +780,23 @@ Recommendation:
 
 Next 10 concrete tasks:
 
-1. Add full SARIF 2.1.0 schema validation.
-2. Add GitHub Action example docs.
-3. Add Rich table rendering while preserving `--no-color`.
-4. Decide output overwrite policy.
-5. Add AST scanner.
-6. Upgrade audit logging pack from bypass patterns to missing-audit structural rules.
-7. Add TypeScript fixture matrix.
-8. Run false-positive review on `fintech-demo` and capture findings.
-9. Add FastAPI app and health endpoint.
-10. Port webhook signature verification.
+1. Run live GitHub Code Scanning SARIF upload check.
+2. Add Rich table rendering while preserving `--no-color`.
+3. Decide output overwrite policy.
+4. Add JavaScript/TypeScript AST support.
+5. Add TypeScript fixture matrix.
+6. Run false-positive review on `fintech-demo` and capture findings.
+7. Add FastAPI app and health endpoint.
+8. Port webhook signature verification.
+9. Port GitHub App JWT/token logic with `httpx`.
+10. Implement Check Runs API client using the new reporter payloads.
 
 After that:
 
-11. Port GitHub App JWT/token logic with `httpx`.
-12. Implement Check Runs API.
-13. Implement Celery worker and Redis token cache.
-14. End-to-end GitHub App test on a demo repo.
-15. Add optional OpenAI judge.
-16. Prepare deployment/demo docs.
+11. Implement Celery worker and Redis token cache.
+12. End-to-end GitHub App test on a demo repo.
+13. Add optional OpenAI judge.
+14. Prepare deployment/demo docs.
 
 ## 13. V1 Definition Of Done
 

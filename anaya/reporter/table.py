@@ -26,13 +26,8 @@ def format_table(summary: ScanSummary) -> str:
                 f"{pack_id}@{version}" for pack_id, version in sorted(summary.pack_versions.items())
             )
         )
-    lines.extend(
-        [
-            "",
-            "Severity: "
-            + ", ".join(f"{name}={count}" for name, count in summary.by_severity.items() if count),
-        ]
-    )
+    severity = ", ".join(f"{name}={count}" for name, count in summary.by_severity.items() if count)
+    lines.extend(["", f"Severity: {severity or 'none'}"])
 
     if summary.by_pack:
         lines.extend(["", "Packs:"])
