@@ -35,6 +35,10 @@ The format follows Keep a Changelog, and this project uses semantic versioning o
 - GitHub App JWT, installation token, Check Run, PR file list, and content-fetch client helpers.
 - Pull request webhook handling for opened, reopened, and synchronize events.
 - GitHub App local setup documentation.
+- In-process pull request scan worker for GitHub App mode.
+- GitHub PR file fetching, trusted base-branch config loading, and custom pack fetching.
+- Check Run completion updates with batched annotations.
+- Optional SARIF upload through GitHub Code Scanning API.
 
 ### Changed
 

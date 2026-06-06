@@ -82,3 +82,14 @@ def test_pack_status_tracks_warns_even_after_overall_fail():
     assert summary.by_pack["generic/secrets-detection"]["status"] == "FAIL"
     assert summary.by_pack["generic/owasp-top10"]["status"] == "WARN"
     assert summary.by_pack["generic/audit-logging"]["status"] == "WARN"
+
+
+def test_scan_contents_uses_repo_relative_paths():
+    pack = load_rule_pack(Path("anaya/packs/generic/secrets-detection.yml"))
+    summary = ScanOrchestrator([pack]).scan_contents(
+        [("src/app.py", 'api_key = "sk_live_1234567890abcdef"\n')]
+    )
+
+    assert summary.total_violations == 1
+    assert summary.results[0].file_path == "src/app.py"
+    assert summary.results[0].violations[0].file_path == "src/app.py"

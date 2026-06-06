@@ -90,4 +90,5 @@ Check:
 - `GET /health` returns `{"status":"ok","service":"anaya"}`.
 - Invalid webhook signatures return 403.
 - Opening or updating a PR creates an in-progress Check Run.
-- The Check Run will remain in progress until the worker milestone lands.
+- The Check Run should complete after the background in-process scan finishes.
+- If `ANAYA_GITHUB_UPLOAD_SARIF=true`, SARIF should upload to Code Scanning when the app has permission.

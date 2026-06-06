@@ -1,9 +1,9 @@
 # GitHub App Foundation
 
 Anaya's hosted API is a FastAPI app that accepts GitHub webhooks, verifies
-GitHub's HMAC signature, creates an in-progress Check Run, and hands the PR scan
-request to a dispatcher placeholder. The async worker that completes scans lands
-in the next milestone.
+GitHub's HMAC signature, creates an in-progress Check Run, and runs an
+in-process PR scan worker. A Redis/Celery deployment worker can replace the
+in-process dispatcher in a later hardening milestone.
 
 ## Environment
 
@@ -12,6 +12,7 @@ ANAYA_GITHUB_APP_ID=123456
 ANAYA_GITHUB_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
 ANAYA_GITHUB_WEBHOOK_SECRET=your-webhook-secret
 ANAYA_GITHUB_API_URL=https://api.github.com
+ANAYA_GITHUB_UPLOAD_SARIF=false
 ```
 
 You can use `ANAYA_GITHUB_PRIVATE_KEY_PATH` instead of
@@ -66,8 +67,12 @@ the API:
 2. Extracts owner, repo, PR number, head SHA, and installation ID.
 3. Creates an installation access token.
 4. Creates an in-progress Check Run named `Anaya Policy Scan`.
-5. Enqueues a placeholder scan request for the future worker.
-6. Returns HTTP 202.
+5. Fetches changed PR files from the head SHA.
+6. Fetches `anaya.yml` and custom pack files from the base/default branch.
+7. Runs the shared Anaya engine.
+8. Updates the Check Run with completed output and annotations.
+9. Uploads SARIF when `ANAYA_GITHUB_UPLOAD_SARIF=true`.
+10. Returns HTTP 202 before the background scan runs.
 
 Other events or PR actions return HTTP 200 with `status: ignored`.
 

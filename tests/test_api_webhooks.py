@@ -61,10 +61,12 @@ def _pull_request_payload(action: str = "opened") -> dict[str, object]:
         "repository": {
             "name": "repo",
             "owner": {"login": "octo"},
+            "default_branch": "main",
         },
         "pull_request": {
             "number": 7,
-            "head": {"sha": "abc123"},
+            "head": {"sha": "abc123", "ref": "feature/anaya"},
+            "base": {"ref": "main"},
         },
     }
 
@@ -128,6 +130,9 @@ def test_webhook_accepts_pull_request_and_creates_check_run():
             head_sha="abc123",
             installation_id=99,
             check_run_id=1234,
+            head_ref="feature/anaya",
+            base_ref="main",
+            default_branch="main",
         )
     ]
 

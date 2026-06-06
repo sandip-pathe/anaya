@@ -108,6 +108,9 @@ def extract_pull_request_scan_request(payload: dict[str, Any]) -> PullRequestSca
         pull_request = payload["pull_request"]
         pull_number = int(pull_request["number"])
         head_sha = str(pull_request["head"]["sha"])
+        head_ref = pull_request.get("head", {}).get("ref")
+        base_ref = pull_request.get("base", {}).get("ref")
+        default_branch = repository.get("default_branch")
         installation_id = int(payload["installation"]["id"])
     except (KeyError, TypeError, ValueError) as exc:
         raise HTTPException(
@@ -121,6 +124,9 @@ def extract_pull_request_scan_request(payload: dict[str, Any]) -> PullRequestSca
         pull_number=pull_number,
         head_sha=head_sha,
         installation_id=installation_id,
+        head_ref=str(head_ref) if head_ref else None,
+        base_ref=str(base_ref) if base_ref else None,
+        default_branch=str(default_branch) if default_branch else None,
     )
 
 

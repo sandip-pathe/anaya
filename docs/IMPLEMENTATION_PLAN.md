@@ -537,15 +537,26 @@ Acceptance:
 
 Goal: make GitHub App scans reliable and non-blocking.
 
+Status:
+
+- In-process FastAPI background dispatcher exists in `anaya/worker/tasks.py`.
+- PR scanner exists in `anaya/worker/pr_scan.py`.
+- Worker fetches base/default branch `anaya.yml`.
+- Worker fetches repo-relative custom pack files referenced by config.
+- Worker fetches changed PR files at the head SHA and skips removed/unsupported files.
+- Worker runs the shared engine using repo-relative paths.
+- Worker updates the Check Run with completed output and annotations.
+- Worker uploads SARIF when `ANAYA_GITHUB_UPLOAD_SARIF=true`.
+- Remaining hosted hardening: Redis/Celery queue, token cache, retries/backoff, Docker Compose, and live ngrok verification.
+
 Tasks:
 
 - Add Redis and Celery.
-- Add `anaya/worker/tasks.py`.
 - Add Docker Compose with Redis.
 - Cache installation tokens in Redis:
   - key `anaya:gh_token:{installation_id}`
   - TTL 3300 seconds
-- Implement `scan_pr` task:
+- Harden `scan_pr` execution:
   - fetch default-branch `anaya.yml`
   - fetch PR changed files
   - filter deleted/renamed/binary files
@@ -570,7 +581,7 @@ Acceptance:
   - scan completes
   - annotations appear inline
   - SARIF appears in Code Scanning
-- Webhook response time under 1 second.
+- Webhook response time under 1 second before background scan execution.
 - Typical scan under 30 seconds.
 
 ### M9. Optional OpenAI Judge
@@ -789,24 +800,22 @@ Recommendation:
 
 Next 10 concrete tasks:
 
-1. Add worker interface and local in-process worker implementation.
-2. Fetch PR files and head contents through the GitHub client.
-3. Run the shared engine against fetched PR files.
-4. Update Check Runs with completed output and annotations.
-5. Add SARIF upload support.
-6. Add retry/backoff behavior for GitHub 401, 429, and 5xx responses.
-7. Add Docker Compose with Redis for hosted mode.
-8. Run live GitHub Code Scanning SARIF upload check.
-9. Add Rich table rendering while preserving `--no-color`.
-10. Add JavaScript/TypeScript AST support.
+1. Add failure-path Check Run updates so scans never stay in progress.
+2. Add retry/backoff behavior for GitHub 401, 429, and 5xx responses.
+3. Add Redis/Celery queue adapter and token cache.
+4. Add Docker Compose with Redis for hosted mode.
+5. Run live GitHub App ngrok test on a demo repo.
+6. Run live GitHub Code Scanning SARIF upload check.
+7. Add Rich table rendering while preserving `--no-color`.
+8. Add JavaScript/TypeScript AST support.
+9. Add TypeScript fixture matrix.
+10. Run false-positive review on `fintech-demo` and capture findings.
 
 After that:
 
-11. Add TypeScript fixture matrix.
-12. Run false-positive review on `fintech-demo` and capture findings.
-13. End-to-end GitHub App test on a demo repo.
-14. Add optional OpenAI judge.
-15. Prepare deployment/demo docs.
+11. End-to-end GitHub App test on a demo repo.
+12. Add optional OpenAI judge.
+13. Prepare deployment/demo docs.
 
 ## 13. V1 Definition Of Done
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 from dataclasses import dataclass
+import gzip
 from pathlib import Path
 import time
 from typing import Any
@@ -31,6 +32,9 @@ class PullRequestScanRequest:
     head_sha: str
     installation_id: int
     check_run_id: int | None = None
+    head_ref: str | None = None
+    base_ref: str | None = None
+    default_branch: str | None = None
 
 
 class GitHubAppClient:
@@ -83,6 +87,25 @@ class GitHubAppClient:
         )
         return response.json()
 
+    async def update_check_run(
+        self,
+        *,
+        owner: str,
+        repo: str,
+        check_run_id: int,
+        installation_token: str,
+        payload: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Update a GitHub Check Run."""
+
+        response = await self._request(
+            "PATCH",
+            f"/repos/{owner}/{repo}/check-runs/{check_run_id}",
+            token=installation_token,
+            json=payload,
+        )
+        return response.json()
+
     async def list_pull_request_files(
         self,
         *,
@@ -126,6 +149,30 @@ class GitHubAppClient:
         if not isinstance(content, str) or encoding != "base64":
             raise GitHubAppError(f"GitHub did not return base64 file content for {path}")
         return base64.b64decode(content).decode("utf-8", errors="replace")
+
+    async def upload_sarif(
+        self,
+        *,
+        owner: str,
+        repo: str,
+        installation_token: str,
+        commit_sha: str,
+        ref: str,
+        sarif: str,
+    ) -> dict[str, Any]:
+        """Upload SARIF to GitHub Code Scanning."""
+
+        response = await self._request(
+            "POST",
+            f"/repos/{owner}/{repo}/code-scanning/sarifs",
+            token=installation_token,
+            json={
+                "commit_sha": commit_sha,
+                "ref": ref,
+                "sarif": encode_sarif_for_upload(sarif),
+            },
+        )
+        return response.json()
 
     async def _request(
         self,
@@ -172,6 +219,13 @@ def create_app_jwt(app_id: str, private_key_pem: str, *, now: int | None = None)
         "iss": app_id,
     }
     return jwt.encode(payload, private_key_pem, algorithm="RS256")
+
+
+def encode_sarif_for_upload(sarif: str) -> str:
+    """Return gzip-compressed, base64-encoded SARIF for GitHub upload."""
+
+    compressed = gzip.compress(sarif.encode("utf-8"))
+    return base64.b64encode(compressed).decode("ascii")
 
 
 def load_private_key(settings: Settings) -> str:

@@ -1,4 +1,5 @@
 import base64
+import gzip
 import json
 from pathlib import Path
 
@@ -8,7 +9,7 @@ import httpx
 import jwt
 import pytest
 
-from anaya.api.github import GitHubAppClient, create_app_jwt, load_private_key
+from anaya.api.github import GitHubAppClient, create_app_jwt, encode_sarif_for_upload, load_private_key
 from anaya.config import Settings
 
 
@@ -62,10 +63,14 @@ async def test_github_client_creates_token_check_run_and_fetches_content():
             return httpx.Response(201, json={"token": "installation-token"})
         if request.url.path.endswith("/check-runs"):
             return httpx.Response(201, json={"id": 42})
+        if request.url.path.endswith("/check-runs/42"):
+            return httpx.Response(200, json={"id": 42, "status": "completed"})
         if request.url.path.endswith("/pulls/7/files"):
             return httpx.Response(200, json=[{"filename": "app.py", "status": "modified"}])
         if request.url.path.endswith("/contents/app.py"):
             return httpx.Response(200, json={"encoding": "base64", "content": encoded_content})
+        if request.url.path.endswith("/code-scanning/sarifs"):
+            return httpx.Response(202, json={"id": "sarif-upload-id"})
         return httpx.Response(404)
 
     private_pem, _ = _test_private_key()
@@ -98,13 +103,37 @@ async def test_github_client_creates_token_check_run_and_fetches_content():
             ref="abc123",
             installation_token=token,
         )
+        updated = await github.update_check_run(
+            owner="octo",
+            repo="repo",
+            check_run_id=42,
+            installation_token=token,
+            payload={"status": "completed", "conclusion": "success"},
+        )
+        sarif_upload = await github.upload_sarif(
+            owner="octo",
+            repo="repo",
+            installation_token=token,
+            commit_sha="abc123",
+            ref="refs/heads/feature",
+            sarif='{"version":"2.1.0"}',
+        )
 
     assert token == "installation-token"
     assert check_run == {"id": 42}
     assert files == [{"filename": "app.py", "status": "modified"}]
     assert content == "print('hello')\n"
+    assert updated == {"id": 42, "status": "completed"}
+    assert sarif_upload == {"id": "sarif-upload-id"}
     assert requests[1][2] == {
         "name": "Anaya Policy Scan",
         "head_sha": "abc123",
         "status": "in_progress",
     }
+
+
+def test_encode_sarif_for_upload_round_trips():
+    encoded = encode_sarif_for_upload('{"version":"2.1.0"}')
+
+    decoded = gzip.decompress(base64.b64decode(encoded)).decode("utf-8")
+    assert decoded == '{"version":"2.1.0"}'

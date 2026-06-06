@@ -53,31 +53,103 @@ class ScanOrchestrator:
         files, skipped_files = collect_files(paths, ignore, languages=languages)
         ignored_rule_ids = set(ignored_rules)
         selected_languages = set(languages)
-        active_rules = [
-            rule
-            for rule in self.rules
-            if rule.id not in ignored_rule_ids and _rule_matches_selected_languages(rule, selected_languages)
-        ]
+        active_rules = self._active_rules(ignored_rule_ids, selected_languages)
 
         results: list[ScanResult] = []
         for file_path in files:
             file_started = perf_counter()
             content = file_path.read_text(encoding="utf-8", errors="replace")
-            violations = [
-                *self.pattern_scanner.scan_file_content(str(file_path), content, active_rules),
-                *self.ast_scanner.scan_file_content(str(file_path), content, active_rules),
-            ]
-            elapsed_ms = (perf_counter() - file_started) * 1000
-            results.append(
-                ScanResult(
-                    file_path=str(file_path),
-                    violations=tuple(violations),
-                    rules_checked=len(active_rules),
-                    scan_duration_ms=elapsed_ms,
-                )
-            )
+            results.append(self._scan_one(str(file_path), content, active_rules, file_started))
 
         scan_duration_ms = (perf_counter() - started) * 1000
+        return self._summarize_results(
+            results,
+            fail_on,
+            warn_on,
+            scan_duration_ms,
+            rules_checked=len(active_rules),
+            skipped_files=skipped_files,
+            config_path=config_path,
+        )
+
+    def scan_contents(
+        self,
+        files: list[tuple[str, str]],
+        *,
+        fail_on: str = "CRITICAL",
+        warn_on: str = "HIGH",
+        ignored_rules: tuple[str, ...] = (),
+        languages: tuple[str, ...] = (),
+        config_path: str | None = None,
+    ) -> ScanSummary:
+        """Scan in-memory source files using repo-relative paths."""
+
+        started = perf_counter()
+        ignored_rule_ids = set(ignored_rules)
+        selected_languages = set(languages)
+        active_rules = self._active_rules(ignored_rule_ids, selected_languages)
+        skipped_files = {"unsupported": 0, "language_filtered": 0}
+
+        results: list[ScanResult] = []
+        for file_path, content in files:
+            language = detect_language(file_path)
+            if language is None:
+                skipped_files["unsupported"] += 1
+                continue
+            if selected_languages and language not in selected_languages:
+                skipped_files["language_filtered"] += 1
+                continue
+            file_started = perf_counter()
+            results.append(self._scan_one(file_path, content, active_rules, file_started))
+
+        scan_duration_ms = (perf_counter() - started) * 1000
+        return self._summarize_results(
+            results,
+            fail_on,
+            warn_on,
+            scan_duration_ms,
+            rules_checked=len(active_rules),
+            skipped_files={key: value for key, value in skipped_files.items() if value},
+            config_path=config_path,
+        )
+
+    def _active_rules(self, ignored_rule_ids: set[str], selected_languages: set[str]) -> list[Rule]:
+        return [
+            rule
+            for rule in self.rules
+            if rule.id not in ignored_rule_ids and _rule_matches_selected_languages(rule, selected_languages)
+        ]
+
+    def _scan_one(
+        self,
+        file_path: str,
+        content: str,
+        active_rules: list[Rule],
+        file_started: float,
+    ) -> ScanResult:
+        violations = [
+            *self.pattern_scanner.scan_file_content(file_path, content, active_rules),
+            *self.ast_scanner.scan_file_content(file_path, content, active_rules),
+        ]
+        elapsed_ms = (perf_counter() - file_started) * 1000
+        return ScanResult(
+            file_path=file_path,
+            violations=tuple(violations),
+            rules_checked=len(active_rules),
+            scan_duration_ms=elapsed_ms,
+        )
+
+    def _summarize_results(
+        self,
+        results: list[ScanResult],
+        fail_on: str,
+        warn_on: str,
+        scan_duration_ms: float,
+        *,
+        rules_checked: int,
+        skipped_files: dict[str, int],
+        config_path: str | None,
+    ) -> ScanSummary:
         all_violations = [violation for result in results for violation in result.violations]
         return _summarize(
             results,
@@ -85,7 +157,7 @@ class ScanOrchestrator:
             fail_on,
             warn_on,
             scan_duration_ms,
-            rules_checked=len(active_rules),
+            rules_checked=rules_checked,
             skipped_files=skipped_files,
             pack_versions={pack.id: pack.version for pack in self.packs},
             config_path=config_path,

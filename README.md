@@ -15,7 +15,7 @@ This folder is the clean Anaya foundation. The older `rbi-compliance-scanner` fo
 - Emit table, JSON, or SARIF-style output from the CLI
 - Ship five generic OSS packs for secrets, OWASP, PII handling, TLS, and audit logging
 - Cover 29 built-in rules with Python and JavaScript fixture tests
-- Provide a FastAPI GitHub App foundation with webhook verification and Check Run creation
+- Provide a FastAPI GitHub App foundation with webhook verification, PR scanning, Check Run updates, and optional SARIF upload
 
 ## Quick Start
 
@@ -79,7 +79,7 @@ Configured packs, thresholds, languages, and ignored rule IDs are validated befo
 
 ## Status
 
-This is the Phase 1/Phase 3/Phase 4/Phase 5 foundation from `ANAYA_SPEC.py`: engine models, rule loader, pattern and Python AST scanners, repository config, reporters, tested generic packs, OSS CLI, and GitHub App API foundation. Async workers, full hosted PR scanning, JavaScript AST scanning, and OpenAI-based optional LLM fallback are intentionally not wired yet.
+This is the Phase 1/Phase 3/Phase 4/Phase 5 foundation from `ANAYA_SPEC.py`: engine models, rule loader, pattern and Python AST scanners, repository config, reporters, tested generic packs, OSS CLI, and in-process GitHub App PR scanning. Redis/Celery hosted queueing, retry hardening, JavaScript AST scanning, and OpenAI-based optional LLM fallback are intentionally not wired yet.
 
 ## Development
 
