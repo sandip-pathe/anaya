@@ -14,7 +14,7 @@ pull request webhooks.
 
 This repo includes:
 
-- `Dockerfile` to install Anaya with the `llm` extra.
+- `Dockerfile` to install Anaya with the `server` and `llm` extras.
 - `railway.json` to use the Dockerfile, healthcheck `/health`, and restart on crashes.
 - FastAPI app entrypoint: `anaya.api.app:app`.
 
@@ -35,6 +35,11 @@ ANAYA_GITHUB_WEBHOOK_SECRET=replace-me
 ANAYA_GITHUB_UPLOAD_SARIF=false
 ANAYA_OPENAI_API_KEY=replace-me
 ```
+
+`ANAYA_OPENAI_API_KEY` alone is not enough for GitHub App operation. It only
+enables optional OpenAI-backed rules after a repository opts in with
+`llm.enabled: true`. Pull request scanning also needs the GitHub App ID, private
+key, and webhook secret.
 
 Optional tuning:
 

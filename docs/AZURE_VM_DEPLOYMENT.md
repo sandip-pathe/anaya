@@ -59,7 +59,7 @@ cd /opt/anaya
 python3.11 -m venv .venv
 . .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -e ".[llm]"
+python -m pip install -e ".[server,llm]"
 ```
 
 ## Configure Secrets

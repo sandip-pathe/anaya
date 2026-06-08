@@ -9,6 +9,7 @@ dist/
 .env
 .venv/
 .release-test/
+.base-install-test/
 env/
 venv/
 

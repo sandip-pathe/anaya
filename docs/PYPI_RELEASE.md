@@ -76,3 +76,10 @@ pipx install anaya
 anaya packs list
 anaya scan . --no-config --format table
 ```
+
+The base PyPI package is the CLI/engine install. Hosted GitHub App deployments
+should install:
+
+```bash
+pip install "anaya[server,llm]"
+```

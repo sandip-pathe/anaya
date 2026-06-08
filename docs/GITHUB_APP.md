@@ -25,7 +25,7 @@ You can use `ANAYA_GITHUB_PRIVATE_KEY_PATH` instead of
 ## Run Locally
 
 ```bash
-python -m pip install -e .[dev]
+python -m pip install -e ".[server,llm,dev]"
 uvicorn anaya.api.app:app --host 0.0.0.0 --port 3000
 ```
 

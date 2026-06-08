@@ -29,6 +29,14 @@ python -m venv .venv
 anaya scan . --no-config --format table
 ```
 
+For CLI-only usage from PyPI, install the base package. Server/GitHub App
+dependencies are optional:
+
+```bash
+pipx install anaya
+pip install "anaya[server,llm]"
+```
+
 Without installing the console script:
 
 ```bash
@@ -91,6 +99,18 @@ llm:
 
 LLM rules are skipped with a warning when OpenAI is not configured. See
 `docs/LLM_RULES.md` for the rule schema, safety limits, and data-handling notes.
+
+## CLI vs GitHub App
+
+The CLI and GitHub App intentionally ship as different surfaces over the same
+engine:
+
+- CLI: installed with the base `anaya` package; no hosted GitHub App runtime
+  dependencies are needed.
+- GitHub App/server: install with `anaya[server]`; add `anaya[llm]` only when
+  hosted LLM rules should run.
+- Railway/Docker: installs `.[server,llm]` because the hosted app needs FastAPI,
+  GitHub API dependencies, Uvicorn, and optional OpenAI support.
 
 ## Status
 
