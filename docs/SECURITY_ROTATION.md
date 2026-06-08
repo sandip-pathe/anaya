@@ -54,5 +54,5 @@ key may already have been exposed.
 - [x] PEM/key-style files are ignored.
 - [x] `anaya/` has no committed secrets.
 - [x] Secret rotation work is documented.
-- [x] `anaya/` has an MIT license.
+- [x] `anaya/` has an AGPL-3.0-or-later license.
 - [ ] External service keys have been rotated.

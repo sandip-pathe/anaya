@@ -6,6 +6,7 @@ from collections.abc import Callable
 
 from fastapi import FastAPI
 
+from anaya import __version__
 from anaya.api.github import GitHubAppClient, github_client_from_settings
 from anaya.api.health import router as health_router
 from anaya.api.webhooks import ScanDispatcher, create_webhook_router
@@ -29,7 +30,7 @@ def create_app(
         settings=resolved_settings,
         github_client_factory=resolved_github_client_factory,
     )
-    app = FastAPI(title="Anaya", version="0.1.0")
+    app = FastAPI(title="Anaya", version=__version__)
     app.include_router(health_router)
     app.include_router(
         create_webhook_router(

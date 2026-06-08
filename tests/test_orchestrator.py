@@ -12,8 +12,8 @@ def test_summary_includes_metadata_and_skipped_files(tmp_path: Path):
     unsupported = tmp_path / "notes.txt"
     binary = tmp_path / "binary.py"
 
-    source.write_text('api_key = "sk_live_1234567890abcdef"\n', encoding="utf-8")
-    ignored.write_text('api_key = "sk_live_1234567890abcdef"\n', encoding="utf-8")
+    source.write_text('api_key = "anaya_test_secret_1234567890"\n', encoding="utf-8")
+    ignored.write_text('api_key = "anaya_test_secret_1234567890"\n', encoding="utf-8")
     unsupported.write_text("hello\n", encoding="utf-8")
     binary.write_bytes(b"abc\x00def")
 
@@ -47,7 +47,7 @@ def test_ignored_rules_reduce_rules_checked_and_findings():
 def test_scan_languages_filters_files_and_rules(tmp_path: Path):
     pack = load_rule_pack(Path("anaya/packs/generic/secrets-detection.yml"))
     source = tmp_path / "source.py"
-    source.write_text('api_key = "sk_live_1234567890abcdef"\n', encoding="utf-8")
+    source.write_text('api_key = "anaya_test_secret_1234567890"\n', encoding="utf-8")
 
     summary = ScanOrchestrator([pack]).scan_paths([tmp_path], languages=("javascript",))
 
@@ -87,7 +87,7 @@ def test_pack_status_tracks_warns_even_after_overall_fail():
 def test_scan_contents_uses_repo_relative_paths():
     pack = load_rule_pack(Path("anaya/packs/generic/secrets-detection.yml"))
     summary = ScanOrchestrator([pack]).scan_contents(
-        [("src/app.py", 'api_key = "sk_live_1234567890abcdef"\n')]
+        [("src/app.py", 'api_key = "anaya_test_secret_1234567890"\n')]
     )
 
     assert summary.total_violations == 1

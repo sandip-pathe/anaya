@@ -21,7 +21,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install package
-        run: python -m pip install -e .[dev]
+        run: python -m pip install -e ".[dev]"
 
       - name: Lint
         run: python -m ruff check .
@@ -33,3 +33,4 @@ jobs:
         run: |
           anaya packs list
           anaya validate-pack anaya/packs/generic/secrets-detection.yml
+          anaya validate-pack anaya/packs/india/dpdp-privacy.yml

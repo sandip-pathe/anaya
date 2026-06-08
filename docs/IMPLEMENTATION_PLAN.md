@@ -27,7 +27,7 @@ V1 must stay narrow:
 
 Open core:
 
-- Free/MIT:
+- Free/AGPL:
   - Engine core
   - CLI
   - GitHub Action or self-hosted workflow
@@ -175,7 +175,7 @@ Tasks:
 - Decide whether to rewrite old repo history or archive the old repo as compromised-prototype history.
 - Add `.gitignore` coverage for `.env`, `*.pem`, generated outputs, caches, and local secrets.
 - Create a fresh Git repo for `anaya/` or move it into the intended main repo.
-- Add `LICENSE` if open-core engine is MIT.
+- Add `LICENSE` for the AGPL OSS engine.
 
 Acceptance:
 
@@ -671,8 +671,8 @@ Tasks:
 
 - Keep RBI prototype separate until V1 generic engine is stable.
 - Create a private/proprietary pack namespace later:
-  - `india/rbi-data-security`
   - `india/dpdp-privacy`
+  - `india/rbi-data-security`
   - `india/sebi-cybersecurity`
 - Translate RBI prototype ideas into new schema.
 - Avoid AI-first compliance judgment.
@@ -801,7 +801,7 @@ Recommendation:
    - Recommendation: CLI + SARIF first, then GitHub App.
 
 4. Rule-pack licensing:
-   - Confirm generic packs are MIT.
+   - Confirm generic packs are AGPL-compatible.
    - Confirm RBI/SEBI/DPDP are private/proprietary.
 
 5. LLM timing:

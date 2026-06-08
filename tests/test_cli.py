@@ -198,7 +198,7 @@ def test_scan_diff_uses_changed_files(tmp_path: Path):
     source.write_text("print('clean')\n", encoding="utf-8")
     subprocess.run(["git", "add", "."], cwd=tmp_path, check=True, capture_output=True)
     subprocess.run(["git", "commit", "-m", "initial"], cwd=tmp_path, check=True, capture_output=True)
-    source.write_text('api_key = "sk_live_1234567890abcdef"\n', encoding="utf-8")
+    source.write_text('api_key = "anaya_test_secret_1234567890"\n', encoding="utf-8")
 
     result = runner.invoke(app, ["scan", str(tmp_path), "--no-config", "--diff", "HEAD"])
 

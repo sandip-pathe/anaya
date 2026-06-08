@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict
 import json
 
+from anaya import __version__
 from anaya.engine.models import ScanSummary
 
 
@@ -12,7 +13,7 @@ def format_audit_json(summary: ScanSummary) -> str:
     """Serialize scan output with audit metadata grouped for later exports."""
 
     payload = {
-        "tool": {"name": "Anaya", "version": "0.1.0"},
+        "tool": {"name": "Anaya", "version": __version__},
         "scan": {
             "overall_status": summary.overall_status,
             "duration_ms": summary.scan_duration_ms,

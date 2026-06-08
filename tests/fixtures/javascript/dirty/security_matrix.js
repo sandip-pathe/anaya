@@ -3,11 +3,11 @@ const crypto = require("crypto");
 const fs = require("fs");
 const https = require("https");
 
-const api_key = "sk_live_1234567890abcdef";
+const api_key = "anaya_test_secret_1234567890";
 const database_password = "super-secret-password";
 const database_url = "postgresql://billing:BillingPass123@db.internal:5432/app";
-const aws_access_key = "AKIAABCDEFGHIJKLMNOP";
-const private_key_header = "-----BEGIN RSA PRIVATE KEY-----";
+const aws_access_key = "ANAYA_FAKE_AWS_KEY_PLACEHOLDER";
+const private_key_header = "ANAYA_FAKE_PRIVATE_KEY_HEADER";
 const auth_header = { Authorization: "Bearer abcdefghijklmnopqrstuvwxyz123456" };
 
 function lookupUser(req, res) {

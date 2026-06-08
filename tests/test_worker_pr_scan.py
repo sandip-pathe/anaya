@@ -39,7 +39,7 @@ class FakeGitHub:
         if path == "policies/custom.yml" and self.custom_pack_text is not None:
             return self.custom_pack_text
         if path == "src/app.py":
-            return 'api_key = "sk_live_1234567890abcdef"\n'
+            return 'api_key = "anaya_test_secret_1234567890"\n'
         raise AssertionError(f"Unexpected content request: {path}")
 
     async def update_check_run(self, **kwargs):

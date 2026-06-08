@@ -4,21 +4,21 @@ from anaya.engine.orchestrator import ScanOrchestrator, resolve_pack_identifier
 from anaya.engine.rule_loader import load_rule_pack, validate_rule_pack
 
 
-PACK_PATH = Path("anaya/packs/india/rbi-data-security.yml")
+PACK_PATH = Path("anaya/packs/india/dpdp-privacy.yml")
 
 
-def test_legacy_rbi_pack_loads_and_resolves_by_id():
+def test_india_dpdp_pack_loads_and_resolves_by_id():
     pack = load_rule_pack(PACK_PATH)
 
-    assert pack.id == "india/rbi-data-security"
+    assert pack.id == "india/dpdp-privacy"
     assert pack.version == "0.1.0"
     assert len(pack.rules) == 5
-    assert resolve_pack_identifier("india/rbi-data-security").resolve() == PACK_PATH.resolve()
+    assert resolve_pack_identifier("india/dpdp-privacy").resolve() == PACK_PATH.resolve()
     assert validate_rule_pack(PACK_PATH) == []
 
 
-def test_legacy_rbi_pack_detects_converted_rule_ids(tmp_path: Path):
-    source = tmp_path / "legacy_rbi_dirty.py"
+def test_india_dpdp_pack_detects_converted_rule_ids(tmp_path: Path):
+    source = tmp_path / "india_dpdp_dirty.py"
     source.write_text(
         "\n".join(
             [
@@ -42,16 +42,16 @@ def test_legacy_rbi_pack_detects_converted_rule_ids(tmp_path: Path):
     }
 
     assert rule_ids == {
-        "RBI-DATA-001",
-        "RBI-DATA-002",
-        "RBI-DATA-003",
-        "RBI-DATA-004",
-        "RBI-DATA-005",
+        "DPDP-DATA-001",
+        "DPDP-DATA-002",
+        "DPDP-DATA-003",
+        "DPDP-DATA-004",
+        "DPDP-DATA-005",
     }
 
 
-def test_legacy_rbi_pack_clean_fixture_passes(tmp_path: Path):
-    source = tmp_path / "legacy_rbi_clean.py"
+def test_india_dpdp_pack_clean_fixture_passes(tmp_path: Path):
+    source = tmp_path / "india_dpdp_clean.py"
     source.write_text(
         "\n".join(
             [

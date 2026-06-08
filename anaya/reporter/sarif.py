@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from anaya import __version__
 from anaya.engine.models import ScanSummary
 
 
@@ -79,8 +80,8 @@ def format_sarif(summary: ScanSummary, *, automation_id: str = "anaya/default") 
                 "tool": {
                     "driver": {
                         "name": "Anaya",
-                        "version": "0.1.0",
-                        "informationUri": "https://github.com/anaya-engine/anaya",
+                        "version": __version__,
+                        "informationUri": "https://github.com/sandip-pathe/anaya",
                         "rules": list(rules_by_id.values()),
                     }
                 },

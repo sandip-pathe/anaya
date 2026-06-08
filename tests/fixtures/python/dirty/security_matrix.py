@@ -33,11 +33,11 @@ def audit_log(event):
 logger = Logger()
 db = Database()
 aadhaar_number = "123412341234"
-api_key = "sk_live_1234567890abcdef"
+api_key = "anaya_test_secret_1234567890"
 database_password = "super-secret-password"
 database_url = "postgresql://billing:BillingPass123@db.internal:5432/app"
-aws_access_key = "AKIAABCDEFGHIJKLMNOP"
-private_key_header = "-----BEGIN RSA PRIVATE KEY-----"
+aws_access_key = "ANAYA_FAKE_AWS_KEY_PLACEHOLDER"
+private_key_header = "ANAYA_FAKE_PRIVATE_KEY_HEADER"
 auth_header = {"Authorization": "Bearer abcdefghijklmnopqrstuvwxyz123456"}
 
 

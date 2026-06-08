@@ -5,6 +5,8 @@ Anaya is a policy-pack-agnostic compliance-as-code engine. The V1 direction is a
 - CLI: local and CI usage through `anaya scan`; this is OSS, similar in spirit to Semgrep
 - GitHub App: pull request checks, annotations, and SARIF output
 
+The OSS repository is licensed under AGPL-3.0-or-later.
+
 This folder is the clean Anaya foundation. The older `rbi-compliance-scanner` folder remains a prototype/reference, mainly useful for GitHub App auth and webhook signature code.
 
 ## Current Scope
@@ -14,6 +16,7 @@ This folder is the clean Anaya foundation. The older `rbi-compliance-scanner` fo
 - Run deterministic pattern rules against source files
 - Emit table, JSON, or SARIF-style output from the CLI
 - Ship five generic OSS packs for secrets, OWASP, PII handling, TLS, and audit logging
+- Include an experimental India DPDP privacy pack for early policy-pack testing
 - Cover 29 built-in rules with Python and JavaScript fixture tests
 - Provide a FastAPI GitHub App foundation with webhook verification, PR scanning, Check Run updates, and optional SARIF upload
 - Support optional OpenAI-backed `type: llm` rules, disabled by default and guarded by repository opt-in
@@ -43,6 +46,7 @@ anaya scan PATH --format check-run
 anaya test-rule --rule ANAYA-SEC-001 --file app.py
 anaya init
 anaya validate-pack anaya\packs\generic\secrets-detection.yml
+anaya validate-pack anaya\packs\india\dpdp-privacy.yml
 anaya packs list
 ```
 
@@ -108,3 +112,6 @@ For the full engineering handoff, see `docs/TECHNICAL_ARCHITECTURE.md`.
 For GitHub Actions SARIF upload, see `docs/GITHUB_ACTION.md`.
 For local GitHub App API setup, see `docs/GITHUB_APP.md`.
 For optional OpenAI-backed rules, see `docs/LLM_RULES.md`.
+For PyPI releases, see `docs/PYPI_RELEASE.md`.
+For Azure VM hosting, see `docs/AZURE_VM_DEPLOYMENT.md`.
+For the public/private repository split, see `docs/REPOSITORY_STRATEGY.md`.

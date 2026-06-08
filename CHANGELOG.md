@@ -42,7 +42,7 @@ The format follows Keep a Changelog, and this project uses semantic versioning o
 - Optional OpenAI-backed `type: llm` rules with repository opt-in.
 - LLM judge prompt/schema modules, structured JSON decisions, warning-only failure handling, and mocked tests.
 - Scan warnings surfaced in table, audit JSON, PR comment, and Check Run outputs.
-- Experimental `india/rbi-data-security` pack converted from the legacy RBI data security YAML rules.
+- Experimental `india/dpdp-privacy` pack with DPDP Act aligned privacy and data-protection signals.
 
 ### Changed
 
@@ -50,6 +50,7 @@ The format follows Keep a Changelog, and this project uses semantic versioning o
 - Starter `anaya.yml` now includes all default OSS generic packs.
 - Generic audit logging pack now includes both explicit-bypass pattern rules and Python structural rules.
 - Runtime settings support raw `ANAYA_GITHUB_PRIVATE_KEY` as well as private-key file paths.
+- Project metadata now targets the public AGPL-licensed OSS release line.
 
 ### Security
 

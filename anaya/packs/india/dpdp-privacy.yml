@@ -1,18 +1,20 @@
 pack:
-  id: "india/rbi-data-security"
+  id: "india/dpdp-privacy"
   version: "0.1.0"
-  name: "India RBI Data Security"
-  description: "Experimental legacy regulatory pack converted from the old RBI data security YAML rules."
+  name: "India DPDP Privacy"
+  description: "Experimental DPDP Act aligned privacy and data-protection signals converted from legacy Indian data-security rules. This pack is not legal advice and does not prove full statutory compliance."
   last_updated: "2026-06-08"
   authors: ["Anaya Team"]
   sources:
-    - url: "https://www.rbi.org.in/"
-      title: "Reserve Bank of India"
+    - url: "https://www.meity.gov.in/static/uploads/2024/02/Digital-Personal-Data-Protection-Act-2023.pdf"
+      title: "Digital Personal Data Protection Act, 2023"
+    - url: "https://www.indiacode.nic.in/handle/123456789/22037"
+      title: "India Code: Digital Personal Data Protection Act, 2023"
 
 rules:
-  - id: "RBI-DATA-001"
+  - id: "DPDP-DATA-001"
     name: "Sensitive Identifiers In Logs Or Files"
-    description: "Aadhaar and PAN numbers must not be logged, printed, or written to unencrypted files."
+    description: "Personal identifiers such as Aadhaar and PAN should not be logged, printed, or written to unencrypted files."
     type: pattern
     severity: HIGH
     languages: [python, javascript, typescript]
@@ -28,12 +30,12 @@ rules:
     message: "Sensitive identifier appears in logs, output, or file writes at line {line}."
     fix_hint: "Mask or omit Aadhaar/PAN values and avoid writing them to unencrypted files."
     references:
-      - url: "https://www.rbi.org.in/"
-        title: "RBI Master Direction on KYC and related security requirements"
-    tags: ["india", "rbi", "privacy", "pii", "legacy"]
+      - url: "https://www.meity.gov.in/static/uploads/2024/02/Digital-Personal-Data-Protection-Act-2023.pdf"
+        title: "DPDP Act, 2023, sections 2(t), 2(u), and 8(5)"
+    tags: ["india", "dpdp", "dpdpa", "privacy", "pii"]
     enabled: true
 
-  - id: "RBI-DATA-002"
+  - id: "DPDP-DATA-002"
     name: "Hardcoded Credentials Or Secrets"
     description: "Database credentials, API keys, and secrets must not be hardcoded in source code."
     type: pattern
@@ -53,12 +55,12 @@ rules:
     message: "Hardcoded credential or secret appears at line {line}."
     fix_hint: "Load credentials from environment variables or a managed secret store."
     references:
-      - url: "https://www.rbi.org.in/"
-        title: "RBI cyber security and secret management expectations"
-    tags: ["india", "rbi", "secrets", "legacy"]
+      - url: "https://www.meity.gov.in/static/uploads/2024/02/Digital-Personal-Data-Protection-Act-2023.pdf"
+        title: "DPDP Act, 2023, section 8(5)"
+    tags: ["india", "dpdp", "dpdpa", "secrets", "security"]
     enabled: true
 
-  - id: "RBI-DATA-003"
+  - id: "DPDP-DATA-003"
     name: "Encryption Disabled Or Missing"
     description: "Encryption must be explicitly enabled for database connections and API calls handling sensitive data."
     type: pattern
@@ -78,14 +80,14 @@ rules:
     message: "Encryption or TLS verification appears disabled or missing at line {line}."
     fix_hint: "Enable TLS verification and require SSL options for sensitive database/API connections."
     references:
-      - url: "https://www.rbi.org.in/"
-        title: "RBI card payment and information security expectations"
-    tags: ["india", "rbi", "tls", "encryption", "legacy"]
+      - url: "https://www.meity.gov.in/static/uploads/2024/02/Digital-Personal-Data-Protection-Act-2023.pdf"
+        title: "DPDP Act, 2023, section 8(5)"
+    tags: ["india", "dpdp", "dpdpa", "tls", "encryption", "security"]
     enabled: true
 
-  - id: "RBI-DATA-004"
+  - id: "DPDP-DATA-004"
     name: "Unmasked PII In API Responses"
-    description: "API responses must not expose full PII fields such as email, phone, card, CVV, or account numbers."
+    description: "API responses should not expose full personal data fields such as email, phone, card, CVV, or account numbers unless necessary for a lawful purpose."
     type: pattern
     severity: HIGH
     languages: [python, javascript, typescript]
@@ -99,12 +101,12 @@ rules:
     message: "API response may expose unmasked PII at line {line}."
     fix_hint: "Mask PII fields and only expose the minimum data needed by the caller."
     references:
-      - url: "https://www.rbi.org.in/"
-        title: "RBI digital payment security and data minimization expectations"
-    tags: ["india", "rbi", "privacy", "pii", "legacy"]
+      - url: "https://www.meity.gov.in/static/uploads/2024/02/Digital-Personal-Data-Protection-Act-2023.pdf"
+        title: "DPDP Act, 2023, sections 4, 6(1), and 8(5)"
+    tags: ["india", "dpdp", "dpdpa", "privacy", "pii", "minimization"]
     enabled: true
 
-  - id: "RBI-DATA-005"
+  - id: "DPDP-DATA-005"
     name: "Hardcoded Sensitive Configuration"
     description: "Sensitive configuration values must be loaded from environment variables, not hardcoded."
     type: pattern
@@ -122,7 +124,7 @@ rules:
     message: "Sensitive configuration appears hardcoded at line {line}."
     fix_hint: "Load environment-specific configuration from environment variables or a secure config service."
     references:
-      - url: "https://www.rbi.org.in/"
-        title: "RBI information security configuration management expectations"
-    tags: ["india", "rbi", "configuration", "legacy"]
+      - url: "https://www.meity.gov.in/static/uploads/2024/02/Digital-Personal-Data-Protection-Act-2023.pdf"
+        title: "DPDP Act, 2023, sections 8(4) and 8(5)"
+    tags: ["india", "dpdp", "dpdpa", "configuration", "security"]
     enabled: true
