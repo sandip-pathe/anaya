@@ -18,7 +18,7 @@ without pretending this is already a mature `2.x` product.
 1. Log in to PyPI as an owner of `anaya`.
 2. Open `https://pypi.org/manage/project/anaya/releases/`.
 3. Yank the old `1.0.0` release with a reason such as:
-   `Superseded by the AGPL Anaya 2.x policy-as-code engine.`
+   `Superseded by the AGPL Anaya 1.1 policy-as-code engine.`
 4. Open `https://pypi.org/manage/project/anaya/settings/publishing/`.
 5. Add a GitHub Actions trusted publisher:
    - Owner: `sandip-pathe`
