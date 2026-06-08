@@ -42,6 +42,7 @@ The format follows Keep a Changelog, and this project uses semantic versioning o
 - Optional OpenAI-backed `type: llm` rules with repository opt-in.
 - LLM judge prompt/schema modules, structured JSON decisions, warning-only failure handling, and mocked tests.
 - Scan warnings surfaced in table, audit JSON, PR comment, and Check Run outputs.
+- Experimental `india/rbi-data-security` pack converted from the legacy RBI data security YAML rules.
 
 ### Changed
 

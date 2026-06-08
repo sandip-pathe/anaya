@@ -1,0 +1,128 @@
+pack:
+  id: "india/rbi-data-security"
+  version: "0.1.0"
+  name: "India RBI Data Security"
+  description: "Experimental legacy regulatory pack converted from the old RBI data security YAML rules."
+  last_updated: "2026-06-08"
+  authors: ["Anaya Team"]
+  sources:
+    - url: "https://www.rbi.org.in/"
+      title: "Reserve Bank of India"
+
+rules:
+  - id: "RBI-DATA-001"
+    name: "Sensitive Identifiers In Logs Or Files"
+    description: "Aadhaar and PAN numbers must not be logged, printed, or written to unencrypted files."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: 'print\s*\([^)]*(?:aadhaar|aadhar|pan_number|pan_card|pan_no)[^)]*\)'
+        description: "Matches print statements containing Aadhaar or PAN fields."
+      - regex: 'log(?:ger)?\.(?:info|debug|warning|error)\s*\([^)]*(?:aadhaar|aadhar|pan_number|pan_card|pan_no)[^)]*\)'
+        description: "Matches logger calls containing Aadhaar or PAN fields."
+      - regex: 'f["''].*\{.*(?:aadhaar|aadhar|pan_number|pan_card|pan_no).*\}.*["'']'
+        description: "Matches f-strings interpolating Aadhaar or PAN fields."
+      - regex: 'open\s*\([^)]*["'']w["''][^)]*\).*(?:aadhaar|aadhar|pan_number|pan_card)'
+        description: "Matches writes of Aadhaar or PAN fields to files."
+    message: "Sensitive identifier appears in logs, output, or file writes at line {line}."
+    fix_hint: "Mask or omit Aadhaar/PAN values and avoid writing them to unencrypted files."
+    references:
+      - url: "https://www.rbi.org.in/"
+        title: "RBI Master Direction on KYC and related security requirements"
+    tags: ["india", "rbi", "privacy", "pii", "legacy"]
+    enabled: true
+
+  - id: "RBI-DATA-002"
+    name: "Hardcoded Credentials Or Secrets"
+    description: "Database credentials, API keys, and secrets must not be hardcoded in source code."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: '(?:password|pwd|secret|api_key|access_token|private_key)\s*=\s*["''][^"'']{8,}["'']'
+        description: "Matches long hardcoded values assigned to secret-like variables."
+      - regex: 'conn\s*=\s*.*://[^:]+:[^@]+@'
+        description: "Matches connection URLs with embedded credentials."
+      - regex: 'mysql\.connector\.connect\s*\([^)]*password\s*=\s*["''][^"'']+["'']'
+        description: "Matches MySQL connection calls with inline passwords."
+      - regex: 'psycopg2\.connect\s*\([^)]*password\s*=\s*["''][^"'']+["'']'
+        description: "Matches psycopg2 connection calls with inline passwords."
+      - regex: 'SQLALCHEMY_DATABASE_URI\s*=\s*["''].*:[^:]+:[^@]+@.*["'']'
+        description: "Matches SQLAlchemy database URIs with embedded credentials."
+    message: "Hardcoded credential or secret appears at line {line}."
+    fix_hint: "Load credentials from environment variables or a managed secret store."
+    references:
+      - url: "https://www.rbi.org.in/"
+        title: "RBI cyber security and secret management expectations"
+    tags: ["india", "rbi", "secrets", "legacy"]
+    enabled: true
+
+  - id: "RBI-DATA-003"
+    name: "Encryption Disabled Or Missing"
+    description: "Encryption must be explicitly enabled for database connections and API calls handling sensitive data."
+    type: pattern
+    severity: MEDIUM
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: 'ssl\s*=\s*False'
+        description: "Matches SSL disabled flags."
+      - regex: 'verify\s*=\s*False'
+        description: "Matches TLS certificate verification disabled flags."
+      - regex: 'SQLALCHEMY_ENGINE_OPTIONS.*ssl.*False'
+        description: "Matches SQLAlchemy engine options disabling SSL."
+      - regex: 'requests\.(?:get|post)\s*\([^)]*verify\s*=\s*False'
+        description: "Matches Python requests calls with TLS verification disabled."
+      - regex: 'mysql\.connector\.connect\s*\((?![^)]*ssl)'
+        description: "Matches MySQL connection calls without an explicit SSL option."
+    message: "Encryption or TLS verification appears disabled or missing at line {line}."
+    fix_hint: "Enable TLS verification and require SSL options for sensitive database/API connections."
+    references:
+      - url: "https://www.rbi.org.in/"
+        title: "RBI card payment and information security expectations"
+    tags: ["india", "rbi", "tls", "encryption", "legacy"]
+    enabled: true
+
+  - id: "RBI-DATA-004"
+    name: "Unmasked PII In API Responses"
+    description: "API responses must not expose full PII fields such as email, phone, card, CVV, or account numbers."
+    type: pattern
+    severity: HIGH
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: 'return\s+jsonify\s*\(.*(?:email|phone|mobile|card_number|cvv|account_number).*\)'
+        description: "Matches Flask jsonify responses containing sensitive PII fields."
+      - regex: 'Response\s*\(.*(?:email|phone|mobile|card_number|cvv|account_number).*\)'
+        description: "Matches response constructors containing sensitive PII fields."
+      - regex: '\.json\s*\(\).*(?:email|phone|mobile|card_number|cvv|account_number)'
+        description: "Matches JSON response handling involving sensitive PII fields."
+    message: "API response may expose unmasked PII at line {line}."
+    fix_hint: "Mask PII fields and only expose the minimum data needed by the caller."
+    references:
+      - url: "https://www.rbi.org.in/"
+        title: "RBI digital payment security and data minimization expectations"
+    tags: ["india", "rbi", "privacy", "pii", "legacy"]
+    enabled: true
+
+  - id: "RBI-DATA-005"
+    name: "Hardcoded Sensitive Configuration"
+    description: "Sensitive configuration values must be loaded from environment variables, not hardcoded."
+    type: pattern
+    severity: MEDIUM
+    languages: [python, javascript, typescript]
+    patterns:
+      - regex: 'API_KEY\s*=\s*["''][A-Za-z0-9]{20,}["'']'
+        description: "Matches long hardcoded API key constants."
+      - regex: 'SECRET_KEY\s*=\s*["''][^"'']{10,}["''](?!\s*#.*env)'
+        description: "Matches hardcoded secret key constants without an env hint."
+      - regex: 'DB_HOST\s*=\s*["''](?!localhost)[\w\.-]+["''](?!\s*os\.getenv)'
+        description: "Matches hardcoded non-local database hosts."
+      - regex: 'ENCRYPTION_KEY\s*=\s*["''][^"'']+["'']'
+        description: "Matches hardcoded encryption key constants."
+    message: "Sensitive configuration appears hardcoded at line {line}."
+    fix_hint: "Load environment-specific configuration from environment variables or a secure config service."
+    references:
+      - url: "https://www.rbi.org.in/"
+        title: "RBI information security configuration management expectations"
+    tags: ["india", "rbi", "configuration", "legacy"]
+    enabled: true
