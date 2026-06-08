@@ -6,6 +6,18 @@ The format follows Keep a Changelog, and this project uses semantic versioning o
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [1.1.1] - 2026-06-09
+
+### Fixed
+
+- Added `anaya --version` for predictable CLI/package verification.
+- Escaped table output on legacy Windows console encodings instead of crashing
+  when scanned files contain characters the active code page cannot print.
+- Added `pytest-asyncio` to developer dependencies so GitHub App async tests run
+  in CI.
+
 ### Added
 
 - OSS Anaya CLI foundation.

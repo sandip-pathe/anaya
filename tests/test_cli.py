@@ -3,7 +3,25 @@ import subprocess
 
 from typer.testing import CliRunner
 
-from anaya.cli.main import app
+from anaya.cli.main import _console_safe_text, app
+
+
+def test_root_version_flag():
+    runner = CliRunner()
+
+    result = runner.invoke(app, ["--version"])
+
+    assert result.exit_code == 0
+    assert result.output.strip() == "anaya 1.1.1"
+
+
+def test_console_safe_text_escapes_characters_legacy_windows_cannot_print():
+    rendered = _console_safe_text("customer name: राम, amount: ₹500", encoding="cp1252")
+
+    rendered.encode("cp1252")
+    assert "customer name:" in rendered
+    assert "\\u0930" in rendered
+    assert "\\u20b9" in rendered
 
 
 def test_scan_output_creates_parent_directory(tmp_path: Path):

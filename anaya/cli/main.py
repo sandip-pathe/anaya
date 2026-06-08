@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Optional
 
 import typer
 
+from anaya import __version__
 from anaya.config import load_settings
 from anaya.engine.git_utils import GitDiffError, changed_files_since
 from anaya.engine.orchestrator import (
@@ -35,6 +37,25 @@ from anaya.reporter.table import format_table
 app = typer.Typer(help="Policy-as-code compliance scanner.")
 packs_app = typer.Typer(help="Inspect bundled rule packs.")
 app.add_typer(packs_app, name="packs")
+
+
+def _version_callback(value: bool) -> None:
+    if value:
+        typer.echo(f"anaya {__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        callback=_version_callback,
+        is_eager=True,
+        help="Show version and exit.",
+    ),
+) -> None:
+    """Policy-as-code compliance scanner."""
 
 
 @app.command()
@@ -235,7 +256,20 @@ def _write_or_echo(rendered: str, output: Path | None) -> None:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(rendered + "\n", encoding="utf-8")
     else:
-        typer.echo(rendered)
+        typer.echo(_console_safe_text(rendered))
+
+
+def _console_safe_text(text: str, encoding: str | None = None) -> str:
+    """Return text that can be printed by the active console encoding."""
+
+    console_encoding = encoding or getattr(sys.stdout, "encoding", None)
+    if not console_encoding:
+        return text
+    try:
+        text.encode(console_encoding)
+    except UnicodeEncodeError:
+        return text.encode(console_encoding, errors="backslashreplace").decode(console_encoding)
+    return text
 
 
 def _render(summary, output_format: str) -> str:
