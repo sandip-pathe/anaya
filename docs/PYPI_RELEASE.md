@@ -2,7 +2,8 @@
 
 Anaya publishes the OSS CLI package under the existing `anaya` PyPI project.
 The old PyPI release is `1.0.0`; this repository starts the cleaned OSS engine
-release line at `2.0.0` so normal `pip install anaya` resolution moves forward.
+release line at `1.1.0` so normal `pip install anaya` resolution moves forward
+without pretending this is already a mature `2.x` product.
 
 ## Repository Decision
 
@@ -49,7 +50,7 @@ release from a new machine:
 
 ```bash
 python -m venv .release-test
-.release-test\Scripts\python -m pip install dist\anaya-2.0.0-py3-none-any.whl
+.release-test\Scripts\python -m pip install dist\anaya-1.1.0-py3-none-any.whl
 .release-test\Scripts\anaya packs list
 ```
 
@@ -61,11 +62,11 @@ python -m venv .release-test
 4. Create and push a tag:
 
 ```bash
-git tag v2.0.0
-git push origin v2.0.0
+git tag v1.1.0
+git push origin v1.1.0
 ```
 
-5. Create a GitHub Release for `v2.0.0`.
+5. Create a GitHub Release for `v1.1.0`.
 6. The `Publish to PyPI` workflow will build and publish after the `pypi`
    environment approval.
 7. Verify:

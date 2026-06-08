@@ -1,0 +1,15 @@
+.git
+.venv
+.release-test
+__pycache__
+*.py[cod]
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.coverage
+build
+dist
+*.egg-info
+secrets
+outputs
+*.sarif

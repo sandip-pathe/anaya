@@ -114,4 +114,5 @@ For local GitHub App API setup, see `docs/GITHUB_APP.md`.
 For optional OpenAI-backed rules, see `docs/LLM_RULES.md`.
 For PyPI releases, see `docs/PYPI_RELEASE.md`.
 For Azure VM hosting, see `docs/AZURE_VM_DEPLOYMENT.md`.
+For Railway hosting, see `docs/RAILWAY_DEPLOYMENT.md`.
 For the public/private repository split, see `docs/REPOSITORY_STRATEGY.md`.
